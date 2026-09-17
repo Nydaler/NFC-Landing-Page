@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Interactivo</title>
+    <!-- Incluimos Tailwind pero respaldado con estilos propios para evitar fallos si se abre localmente -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .view-section { display: none !important; }
+        .is-flex { display: flex !important; }
+        .is-block { display: block !important; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 antialiased selection:bg-brand-200">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 500: '#22c55e', 600: '#16a34a' } } }
+            }
+        }
+    </script>
+
+    <!-- VISTA HOME -->
+    <div id="view-home" class="view-section is-flex w-full max-w-md mx-auto bg-gray-50 min-h-screen flex-col shadow-2xl relative">
+        <div class="h-64 bg-cover bg-center relative flex-shrink-0 rounded-b-3xl shadow-sm" style="background-image: url('https://placehold.co/800x600/333/fff?text=Restaurante');">
+            <div class="absolute inset-0 bg-black/40 rounded-b-3xl"></div>
+            <div class="absolute bottom-4 left-6 text-white">
+                <h1 class="text-3xl font-black shadow-sm">El Gran Sabor</h1>
+                <p class="text-sm font-medium flex items-center gap-1 mt-1"><i class="ph-fill ph-map-pin"></i> Mesa 12</p>
+            </div>
+        </div>
+
+        <div class="px-6 py-8 flex flex-col gap-4 flex-1">
+            <button onclick="showView('view-menu')" class="bg-gray-900 text-white p-5 rounded-3xl shadow-lg flex items-center justify-between active:scale-95 transition-transform">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 p-3 rounded-xl"><i class="ph-fill ph-book-open text-2xl"></i></div>
+                    <div class="text-left">
+                        <span class="font-black text-lg block">Ver Menú</span>
+                        <span class="text-xs text-gray-300">Explora nuestros platos</span>
+                    </div>
+                </div>
+                <i class="ph ph-caret-right text-gray-400 text-xl"></i>
+            </button>
+
+            <button onclick="showView('view-game-menu')" class="bg-blue-600 text-white p-5 rounded-3xl shadow-lg flex items-center justify-between active:scale-95 transition-transform">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 p-3 rounded-xl"><i class="ph-fill ph-game-controller text-2xl"></i></div>
+                    <div class="text-left">
+                        <span class="font-black text-lg block">Juegos de Mesa</span>
+                        <span class="text-xs text-blue-200">Diviértete mientras esperas</span>
+                    </div>
+                </div>
+                <i class="ph ph-caret-right text-blue-200 text-xl"></i>
+            </button>
+
+            <div class="grid grid-cols-2 gap-4 mt-2">
+                <button onclick="showView('view-wifi')" class="bg-white border border-gray-200 text-gray-800 p-5 rounded-3xl shadow-sm flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform">
+                    <div class="bg-brand-50 p-3 rounded-full"><i class="ph-fill ph-wifi-high text-2xl text-brand-600"></i></div>
+                    <span class="font-bold text-sm">Wi-Fi Gratis</span>
+                </button>
+                <button onclick="showView('view-reservas')" class="bg-white border border-gray-200 text-gray-800 p-5 rounded-3xl shadow-sm flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform">
+                    <div class="bg-orange-50 p-3 rounded-full"><i class="ph-fill ph-calendar-check text-2xl text-orange-500"></i></div>
+                    <span class="font-bold text-sm text-center leading-tight">Reservas<br>y Preg.</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="p-4 text-center mt-auto pb-6">
+            <button onclick="showView('view-admin-login')" class="text-xs text-gray-400 underline font-medium">Acceso Restaurante (Admin)</button>
+        </div>
+    </div>
+
+    <!-- VISTA MENU (Cliente) -->
+    <div id="view-menu" class="view-section w-full max-w-md mx-auto bg-gray-50 min-h-screen flex-col pb-24 relative shadow-2xl">
+        <div class="bg-white px-5 pt-6 pb-2 sticky top-0 z-20 shadow-sm rounded-b-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <button onclick="showView('view-home')" class="bg-gray-100 p-2 rounded-full text-gray-700 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+                <h2 class="font-black text-xl flex-1 text-gray-800">Menú</h2>
+            </div>
+            <div class="relative mb-3">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar platos o ingredientes..." class="w-full bg-gray-100 text-sm rounded-full py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2" id="filter-tags">
+                <button id="tag-btn-vegan" onclick="toggleTag('vegan')" class="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200 transition-colors">🌿 Vegano</button>
+                <button id="tag-btn-gf" onclick="toggleTag('gf')" class="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200 transition-colors">🌾 Sin TACC</button>
+                <button id="tag-btn-spicy" onclick="toggleTag('spicy')" class="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200 transition-colors">🌶️ Picante</button>
+            </div>
+        </div>
+        
+        <div class="px-4 py-4" id="menu-content"></div>
+
+        <!-- Botón flotante de Tu Pedido -->
+        <button id="cart-float-btn" onclick="openCart()" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-brand-600 text-white font-bold px-6 py-3 rounded-full shadow-2xl items-center gap-3 z-30 active:scale-95 transition-transform whitespace-nowrap">
+            <i class="ph ph-list-checks text-xl"></i>
+            <span id="cart-float-text">Tu Pedido (0)</span>
+        </button>
+    </div>
+
+    <!-- MODAL TU PEDIDO -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end transition-opacity">
+        <div class="w-full max-w-md mx-auto bg-white rounded-t-3xl min-h-[50vh] max-h-[80vh] flex flex-col relative animate-[slideUp_0.3s_ease-out]">
+            <button onclick="closeCart()" class="absolute top-4 right-4 bg-gray-100 p-2 rounded-full text-gray-600 active:scale-95"><i class="ph ph-x"></i></button>
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-2xl font-black text-gray-800">Tu Pedido</h2>
+                <p class="text-sm text-gray-500 font-medium text-brand-600 mt-1">¡Leéle esta lista al mozo para pedir! 📝</p>
+            </div>
+            <div id="cart-items" class="p-6 overflow-y-auto flex-1 flex flex-col gap-4"></div>
+            <div class="p-6 bg-gray-50 border-t border-gray-200 rounded-t-3xl shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)]">
+                <div class="flex justify-between items-end mb-4">
+                    <span class="text-gray-500 font-medium">Total Estimado</span>
+                    <span id="cart-total" class="text-3xl font-black text-gray-800">$0</span>
+                </div>
+                <button onclick="closeCart()" class="w-full bg-brand-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform">Volver al Menú</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA ADMIN LOGIN -->
+    <div id="view-admin-login" class="view-section w-full max-w-md mx-auto bg-gray-100 min-h-screen flex-col justify-center px-6 relative shadow-2xl">
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+        <div class="bg-white p-8 rounded-3xl shadow-xl w-full text-center border border-gray-100 animate-[slideUp_0.3s_ease-out]">
+            <i class="ph-duotone ph-lock-key text-5xl text-gray-800 mb-4"></i>
+            <h2 class="text-2xl font-black text-gray-800 mb-6">Acceso Restringido</h2>
+            <div class="text-left mb-6 bg-blue-50 p-3 rounded-lg border border-blue-100 text-xs text-blue-600 font-medium">
+                <i class="ph-fill ph-info"></i> Usa <b>admin</b> y <b>123456</b> para entrar en esta demo.
+            </div>
+            <input type="text" id="login-user" placeholder="Usuario" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mb-3 focus:outline-none focus:border-gray-900">
+            <input type="password" id="login-pass" placeholder="Contraseña" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mb-6 focus:outline-none focus:border-gray-900">
+            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl active:scale-95 transition-transform">Ingresar</button>
+        </div>
+    </div>
+
+    <!-- VISTA ADMIN (Panel de Control) -->
+    <div id="view-admin" class="view-section w-full max-w-md mx-auto bg-gray-100 min-h-screen shadow-2xl flex-col pb-10">
+        <div class="bg-gray-900 text-white px-5 py-4 flex items-center gap-3 sticky top-0 z-10 shadow-md">
+            <button onclick="showView('view-home')" class="bg-gray-800 p-2 rounded-full text-white active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+            <h2 class="font-bold text-lg flex-1">Panel de Control</h2>
+        </div>
+        <div class="p-5">
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6">
+                <h3 class="font-bold text-gray-800 mb-4">Configuración Wi-Fi</h3>
+                <div class="flex flex-col gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">Nombre de la Red (SSID)</label>
+                        <input type="text" id="admin-wifi-ssid" placeholder="Ej: MiRestaurante_WIFI" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">Contraseña</label>
+                        <input type="text" id="admin-wifi-pass" placeholder="Ej: clave123" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                    </div>
+                    <button onclick="saveWifiSettings()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl mt-2 active:scale-95 transition-transform"><i class="ph ph-floppy-disk mr-2"></i>Guardar Wi-Fi</button>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6">
+                <h3 class="font-bold text-gray-800 mb-4" id="admin-form-title">Agregar Nuevo Plato</h3>
+                <div class="flex flex-col gap-3">
+                    <input type="hidden" id="admin-id">
+                    
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">Categoría</label>
+                        <select id="admin-category-select" onchange="checkNewCategory()" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900"></select>
+                        <input type="text" id="admin-category-new" placeholder="Escribe la nueva categoría..." class="hidden w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-2 focus:outline-none focus:border-gray-900">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <div class="flex-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Nombre</label>
+                            <input type="text" id="admin-name" placeholder="Ej: Milanesa..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                        </div>
+                        <div class="w-24">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Orden</label>
+                            <input type="number" id="admin-order" value="1" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">Precio ($)</label>
+                        <input type="number" id="admin-price" placeholder="Ej: 4500" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">Descripción</label>
+                        <textarea id="admin-desc" placeholder="Ingredientes..." rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">URL Imagen (Opcional)</label>
+                        <input type="text" id="admin-image" placeholder="https://..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                    </div>
+                    
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 grid grid-cols-2 gap-2 mt-2">
+                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-featured" class="w-4 h-4 accent-gray-900"> ⭐ Destacado</label>
+                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-vegan" class="w-4 h-4 accent-green-500"> 🌿 Vegano</label>
+                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-gf" class="w-4 h-4 accent-amber-600"> 🌾 Sin TACC</label>
+                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-spicy" class="w-4 h-4 accent-red-500"> 🌶️ Picante</label>
+                    </div>
+
+                    <label class="flex items-center gap-2 text-sm font-bold text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 mt-2 cursor-pointer">
+                        <input type="checkbox" id="admin-outofstock" class="w-5 h-5 accent-red-600"> 🚫 Marcar como Agotado
+                    </label>
+
+                    <button onclick="saveDish()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl mt-2 active:scale-95 transition-transform">Guardar Plato</button>
+                    <button onclick="resetAdminForm()" id="admin-cancel-btn" class="hidden w-full bg-gray-200 text-gray-700 font-bold py-2 rounded-xl mt-1 active:scale-95 transition-transform">Cancelar Edición</button>
+                </div>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-3 ml-1">Menú Actual</h3>
+            <div id="admin-list" class="flex flex-col gap-3"></div>
+        </div>
+    </div>
+
+    <!-- 1. Menú Principal de Juegos (HUB) -->
+    <div id="view-game-menu" class="view-section w-full max-w-md mx-auto bg-blue-50 min-h-screen flex-col items-center relative px-6 py-10 shadow-2xl">
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 z-10 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+        
+        <div class="text-center mt-12 mb-8">
+            <i class="ph-duotone ph-game-controller text-6xl text-blue-500 mb-4"></i>
+            <h2 class="text-3xl font-black text-gray-800">Sala de Juegos</h2>
+            <p class="text-gray-500 text-sm mt-2">Elige un juego para disfrutar la espera</p>
+        </div>
+
+        <div class="w-full flex flex-col gap-4">
+            <button onclick="showView('view-game-talk')" class="bg-white border-2 border-brand-100 p-5 rounded-2xl flex items-center gap-4 shadow-md active:scale-95 transition-transform text-left">
+                <div class="bg-brand-50 text-brand-600 p-4 rounded-xl flex-shrink-0"><i class="ph ph-chat-centered-text text-3xl"></i></div>
+                <div class="flex-1">
+                    <h2 class="font-bold text-gray-800 text-lg">Charlas de Mesa</h2>
+                    <p class="text-xs text-gray-500 leading-tight mt-1">Rompehielos, debates y preguntas curiosas.</p>
+                </div>
+                <i class="ph ph-caret-right text-xl text-gray-400"></i>
+            </button>
+
+            <button onclick="showView('view-game-trivia')" class="bg-white border-2 border-purple-100 p-5 rounded-2xl flex items-center gap-4 shadow-md active:scale-95 transition-transform text-left">
+                <div class="bg-purple-50 text-purple-600 p-4 rounded-xl flex-shrink-0"><i class="ph ph-timer text-3xl"></i></div>
+                <div class="flex-1">
+                    <h2 class="font-bold text-gray-800 text-lg">¡Quiz Trivia!</h2>
+                    <p class="text-xs text-gray-500 leading-tight mt-1">Pon a prueba tu conocimiento a contrarreloj.</p>
+                </div>
+                <i class="ph ph-caret-right text-xl text-gray-400"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Juego: Charlas de Mesa (Preguntas Disparadoras) -->
+    <div id="view-game-talk" class="view-section w-full max-w-md mx-auto bg-brand-50 min-h-screen flex-col items-center relative px-6 py-8 shadow-2xl">
+        <button onclick="showView('view-game-menu')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 z-10 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+        <div class="text-center mt-6 mb-6">
+            <i id="game-icon" class="ph ph-cards text-5xl text-brand-500 mb-2 transition-colors duration-300"></i>
+            <h2 class="text-2xl font-black text-gray-800">Charlas de Mesa</h2>
+            <p class="text-gray-500 text-sm mt-1">Elige una categoría para empezar</p>
+        </div>
+        
+        <div class="flex overflow-x-auto hide-scrollbar gap-3 w-full mb-6 pb-2 px-1" id="game-categories"></div>
+
+        <div id="game-card" class="bg-white w-full h-64 rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center border-2 border-brand-100 relative transition-all duration-300">
+            <span id="game-category-label" class="absolute top-4 text-xs font-bold uppercase tracking-wider text-brand-500 transition-colors">Categoría</span>
+            <p id="game-question" class="text-xl font-bold text-gray-700 leading-snug transition-all duration-300">Toca una categoría para revelar la primera pregunta.</p>
+        </div>
+        
+        <button onclick="nextQuestion()" id="game-btn" class="mt-8 bg-brand-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg active:scale-95 transition-transform w-full opacity-50 cursor-not-allowed" disabled>Siguiente Pregunta</button>
+    </div>
+
+    <!-- 3. Juego: Quiz Trivia -->
+    <div id="view-game-trivia" class="view-section w-full max-w-md mx-auto bg-purple-50 min-h-screen flex-col relative shadow-2xl">
+        <div class="px-6 py-6 flex items-center justify-between z-10 sticky top-0 bg-purple-50/90 backdrop-blur">
+            <button onclick="showView('view-game-menu')" class="bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+            <h2 class="text-xl font-black text-purple-900">Quiz Trivia</h2>
+            <div class="w-9"></div>
+        </div>
+
+        <div id="trivia-categories-screen" class="px-6 flex flex-col flex-1 pb-10">
+            <div class="text-center mb-8">
+                <p class="text-purple-600 font-medium">Selecciona una categoría</p>
+            </div>
+            <div class="grid grid-cols-1 gap-4">
+                <button onclick="startTrivia('historia')" class="bg-white border-2 border-orange-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
+                    <div class="bg-orange-100 text-orange-600 p-3 rounded-full"><i class="ph-fill ph-bank text-2xl"></i></div>
+                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Historia</span>
+                </button>
+                <button onclick="startTrivia('deportes')" class="bg-white border-2 border-green-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
+                    <div class="bg-green-100 text-green-600 p-3 rounded-full"><i class="ph-fill ph-soccer-ball text-2xl"></i></div>
+                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Deportes</span>
+                </button>
+                <button onclick="startTrivia('musica')" class="bg-white border-2 border-pink-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
+                    <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i class="ph-fill ph-music-notes text-2xl"></i></div>
+                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Música</span>
+                </button>
+                <button onclick="startTrivia('entretenimiento')" class="bg-white border-2 border-yellow-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
+                    <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full"><i class="ph-fill ph-film-slate text-2xl"></i></div>
+                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Cine & TV</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="trivia-active-screen" class="hidden px-6 flex-col flex-1 pb-10">
+            <div class="flex justify-between items-center bg-white p-3 rounded-2xl shadow-sm border border-purple-100 mb-6">
+                <span id="trivia-progress" class="text-sm font-bold text-purple-400">Pregunta 1/5</span>
+                <div class="flex items-center gap-1 text-purple-600 font-black bg-purple-100 px-3 py-1 rounded-lg transition-colors" id="trivia-timer-container">
+                    <i class="ph-fill ph-timer"></i> <span id="trivia-timer-text">15</span>s
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-3xl shadow-md border-2 border-purple-200 mb-6 min-h-[160px] flex items-center justify-center text-center">
+                <h3 id="trivia-question-text" class="text-xl font-bold text-gray-800 leading-snug">¿Pregunta?</h3>
+            </div>
+
+            <div id="trivia-options" class="flex flex-col gap-3"></div>
+        </div>
+
+        <div id="trivia-result-screen" class="hidden px-6 flex-col items-center justify-center flex-1 pb-10">
+            <div class="bg-white p-8 rounded-3xl shadow-xl border-2 border-purple-200 text-center w-full">
+                <i class="ph-duotone ph-trophy text-7xl text-yellow-400 mb-4"></i>
+                <h2 class="text-3xl font-black text-gray-800 mb-2">¡Terminaste!</h2>
+                <p class="text-gray-500 mb-6">Tu puntuación final es:</p>
+                <div class="text-6xl font-black text-purple-600 mb-8"><span id="trivia-score-text">0</span><span class="text-3xl text-purple-300">/5</span></div>
+                
+                <button onclick="resetTriviaUI()" class="w-full bg-purple-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-transform mb-3">Jugar Otra Vez</button>
+                <button onclick="showView('view-game-menu')" class="w-full bg-gray-100 text-gray-700 font-bold py-4 rounded-xl active:scale-95 transition-transform">Volver a Juegos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA WIFI -->
+    <div id="view-wifi" class="view-section w-full max-w-md mx-auto bg-blue-50 min-h-screen flex-col items-center justify-center relative px-6 shadow-2xl">
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+        <i class="ph ph-wifi-high text-7xl text-blue-500 mb-6"></i>
+        <h2 class="text-3xl font-black text-gray-800 mb-2 text-center">Conéctate gratis</h2>
+        <div class="bg-white p-6 rounded-3xl shadow-lg w-full max-w-xs mt-6 text-center border border-blue-100">
+            <p class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-1">Red</p>
+            <p id="wifi-ssid-display" class="text-xl font-black text-gray-800 mb-4">ElGranSabor_WIFI</p>
+            <p class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-1">Contraseña</p>
+            <p id="wifi-pass-display" class="text-2xl font-mono font-bold text-blue-600 mb-6 bg-blue-50 py-2 rounded-lg">sabor2024</p>
+            <button onclick="copyWifi()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"><i class="ph ph-copy"></i> Copiar Contraseña</button>
+        </div>
+    </div>
+
+    <!-- VISTA RESERVAS Y PREGUNTAS -->
+    <div id="view-reservas" class="view-section w-full max-w-md mx-auto bg-orange-50 min-h-screen flex-col items-center justify-center relative px-6 shadow-2xl">
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+        <i class="ph ph-calendar-check text-7xl text-orange-500 mb-6"></i>
+        <h2 class="text-3xl font-black text-gray-800 mb-2 text-center">Atención al Cliente</h2>
+        <p class="text-gray-500 text-sm text-center mb-6">Elige una opción para comunicarte con nosotros</p>
+        
+        <div class="w-full flex flex-col gap-4 max-w-xs">
+            <a href="https://wa.me/" target="_blank" class="bg-emerald-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
+                <i class="ph-fill ph-whatsapp-logo text-2xl"></i> Escribir por WhatsApp
+            </a>
+            <a href="https://google.com" target="_blank" class="bg-white border-2 border-orange-200 text-gray-800 font-bold p-4 rounded-2xl shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-transform">
+                <i class="ph-fill ph-star text-2xl text-yellow-500"></i> Dejar Reseña en Google
+            </a>
+            <a href="https://instagram.com" target="_blank" class="bg-white border-2 border-orange-200 text-gray-800 font-bold p-4 rounded-2xl shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-transform">
+                <i class="ph-fill ph-globe text-2xl text-blue-500"></i> Web o Reservas
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenedor Toast -->
+    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm"></div>
+
+    <script>
+        const defaultData = [
+            { id: 1, name: "Hamburguesa Clásica", description: "Carne 200g, cheddar, lechuga, tomate y papas fritas.", price: 4500, category: "Principales", image: "https://placehold.co/400x300/ff9900/ffffff?text=Hamburguesa", isVegan: false, isGlutenFree: false, isSpicy: false, featured: true, order: 1, outOfStock: false },
+            { id: 2, name: "Cerveza Artesanal IPA", description: "Pinta 500ml de cerveza artesanal local.", price: 2200, category: "Bebidas", image: "https://placehold.co/400x300/ffcc00/ffffff?text=Cerveza", isVegan: true, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: false },
+            { id: 3, name: "Ensalada César", description: "Lechuga, crutones, parmesano, pollo y aderezo.", price: 3800, category: "Entradas", image: "https://placehold.co/400x300/66cc33/ffffff?text=Ensalada", isVegan: false, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: false },
+            { id: 4, name: "Tacos Al Pastor", description: "3 Tacos con carne de cerdo marinada y piña.", price: 4200, category: "Principales", image: "https://placehold.co/400x300/cc3300/ffffff?text=Tacos", isVegan: false, isGlutenFree: false, isSpicy: true, featured: true, order: 2, outOfStock: false },
+            { id: 5, name: "Volcán de Chocolate", description: "Bizcocho caliente con centro líquido y helado.", price: 2800, category: "Postres", image: "https://placehold.co/400x300/331a00/ffffff?text=Postre", isVegan: false, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: true }
+        ];
+        
+        let menuData = JSON.parse(localStorage.getItem('restaurant_menu_v2')) || defaultData;
+        let wifiData = JSON.parse(localStorage.getItem('restaurant_wifi_v2')) || { ssid: "ElGranSabor_WIFI", pass: "sabor2024" };
+        
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "123456";
+
+        let orderCart = [];
+        let searchQuery = '';
+        let activeTags = [];
+        let editingId = null;
+
+        // --- SISTEMA DE JUEGOS: CHARLAS DE MESA (150+ preguntas automáticas) ---
+        const gameDB = {
+            rompehielos: { name: "Tranqui", icon: "ph-ice-cube", color: "blue", bg: "bg-blue-50", border: "border-blue-200", btn: "bg-blue-600", text: "text-blue-600", questions: [] },
+            profundas: { name: "Profundas", icon: "ph-brain", color: "purple", bg: "bg-purple-50", border: "border-purple-200", btn: "bg-purple-600", text: "text-purple-600", questions: [] },
+            divertidas: { name: "Divertidas", icon: "ph-smiley-wink", color: "yellow", bg: "bg-yellow-50", border: "border-yellow-300", btn: "bg-yellow-500", text: "text-yellow-600", questions: [] },
+            picantes: { name: "Citas", icon: "ph-heart", color: "red", bg: "bg-red-50", border: "border-red-200", btn: "bg-red-600", text: "text-red-600", questions: [] }
+        };
+
+        function initGameDatabase() {
+            const generar = (base, formatos, temas) => {
+                let list = [...base];
+                formatos.forEach(f => temas.forEach(t => list.push(f.replace(/{x}/g, t))));
+                return list.sort(() => Math.random() - 0.5);
+            };
+
+            gameDB.rompehielos.questions = generar(
+                ["¿Cuál es tu comida favorita de la infancia?", "¿A dónde viajarías ahora mismo si te pagaran todo?", "¿Qué superpoder inútil elegirías?"],
+                ["¿Qué opinas sinceramente sobre {x}?", "¿Cuál es tu mejor recuerdo relacionado con {x}?", "¿Qué es lo que más odias de {x}?", "¿Podrías vivir sin {x} por un año?", "¿Qué consejo le darías a alguien sobre {x}?"],
+                ["la pizza", "viajar en avión", "el café", "las redes sociales", "el fin de semana", "las reuniones familiares", "ir al cine", "el home office", "la música en vivo", "la comida rápida", "los videojuegos", "los libros de autoayuda", "las mascotas", "el clima lluvioso", "madrugar", "las aplicaciones de citas", "la inteligencia artificial", "el gimnasio"]
+            );
+
+            gameDB.profundas.questions = generar(
+                ["¿Qué es lo que más valoras en una verdadera amistad?", "¿Cuál es tu mayor miedo que pocos conocen?", "¿Cómo te gustaría ser recordado?"],
+                ["¿Cómo ha cambiado tu visión de {x} en los últimos 5 años?", "¿Qué impacto crees que tiene {x} en la humanidad de hoy?", "¿Cuál es la lección más dura que aprendiste sobre {x}?", "¿Sientes que {x} está sobrevalorado o subestimado?"],
+                ["el paso del tiempo", "la soledad", "el fracaso", "el éxito profesional", "el dinero", "la familia", "el amor", "la muerte", "el destino", "la libertad", "la salud mental", "el ego", "el perdón", "la traición", "la nostalgia", "el propósito de vida"]
+            );
+
+            gameDB.divertidas.questions = generar(
+                ["¿Si tuvieras que pelear contra 100 patos o 1 caballo miniatura, qué eliges?", "¿Cuál es la peor compra que has hecho en tu vida?", "¿Qué conspiración crees que en el fondo es cierta?"],
+                ["¿Cuál sería tu arma secreta para combatir a {x}?", "¿Si te nombran presidente del mundo, qué harías con {x}?", "¿Cuál es tu experiencia más vergonzosa con {x}?", "¿Te imaginas vivir en un mundo donde {x} no existiera?"],
+                ["los zombies", "los aliens", "las palomas", "las matemáticas", "los lunes", "las suegras", "los mosquitos", "el gimnasio", "los terraplanistas", "las notas de voz de 5 minutos", "el horóscopo", "las reuniones innecesarias", "el tráfico", "las dietas milagrosas"]
+            );
+
+            gameDB.picantes.questions = generar(
+                ["¿Cuál es tu idea de una cita completamente perfecta?", "¿Qué es lo primero que le miras a alguien?", "¿Cuál es tu mayor 'red flag' (bandera roja) en una relación?"],
+                ["¿Cuál es tu postura más firme e inquebrantable sobre {x}?", "¿Alguna vez te metiste en problemas por culpa de {x}?", "¿Qué consejo le darías a tu 'yo' del pasado sobre {x}?", "¿Crees genuinamente que {x} mata la pasión en una pareja?"],
+                ["las aplicaciones de citas", "el matrimonio", "la convivencia", "las relaciones a distancia", "los celos", "el coqueteo por redes", "la primera cita", "las ex parejas", "los secretos en el celular", "la diferencia de edad", "las indirectas", "declararse primero", "los amigos con derechos", "la rutina"]
+            );
+        }
+        initGameDatabase(); 
+        let activeGameCategory = null;
+
+        // --- SISTEMA DE JUEGOS: TRIVIA ---
+        const triviaQuestions = {
+            historia: [
+                { q: "¿En qué año llegó Cristóbal Colón a América?", options: ["1492", "1592", "1402", "1512"], ans: 0 },
+                { q: "¿En qué año cayó el Muro de Berlín?", options: ["1985", "1989", "1991", "1995"], ans: 1 },
+                { q: "¿Qué civilización construyó Machu Picchu?", options: ["Aztecas", "Mayas", "Incas", "Toltecas"], ans: 2 },
+                { q: "¿Quién fue el primer presidente de Argentina?", options: ["San Martín", "Rivadavia", "Sarmiento", "Roca"], ans: 1 },
+                { q: "¿Cómo se llamaba la moneda de España antes del Euro?", options: ["Franco", "Libra", "Peseta", "Escudo"], ans: 2 }
+            ],
+            deportes: [
+                { q: "¿Qué país ganó el Mundial de Fútbol en 2022?", options: ["Francia", "Brasil", "Argentina", "Alemania"], ans: 2 },
+                { q: "¿Cuántos minutos dura un partido de fútbol tradicional?", options: ["80", "90", "100", "120"], ans: 1 },
+                { q: "¿Qué deporte practica profesionalmente LeBron James?", options: ["Béisbol", "Tenis", "Básquet", "Fútbol Americano"], ans: 2 },
+                { q: "¿Quién tiene el récord mundial de los 100 metros lisos?", options: ["Tyson Gay", "Yohan Blake", "Usain Bolt", "Carl Lewis"], ans: 2 },
+                { q: "¿De qué país es el tenista Roger Federer?", options: ["Suecia", "Austria", "Alemania", "Suiza"], ans: 3 }
+            ],
+            musica: [
+                { q: "¿Quién es considerado el 'Rey del Pop'?", options: ["Prince", "Elvis Presley", "Michael Jackson", "Stevie Wonder"], ans: 2 },
+                { q: "¿Qué banda lideraba Freddie Mercury?", options: ["The Beatles", "Queen", "Rolling Stones", "Nirvana"], ans: 1 },
+                { q: "¿Qué famoso compositor era sordo en su etapa final?", options: ["Mozart", "Bach", "Beethoven", "Chopin"], ans: 2 },
+                { q: "¿Quién canta 'Oops!... I Did It Again'?", options: ["Christina Aguilera", "Britney Spears", "Madonna", "Shakira"], ans: 1 },
+                { q: "¿Cuántas cuerdas tiene una guitarra clásica?", options: ["4", "5", "6", "7"], ans: 2 }
+            ],
+            entretenimiento: [
+                { q: "¿Qué personaje dice 'Yo soy tu padre'?", options: ["Voldemort", "Darth Vader", "Thanos", "Batman"], ans: 1 },
+                { q: "¿En qué serie aparece el personaje Walter White?", options: ["Prison Break", "The Wire", "Breaking Bad", "Mad Men"], ans: 2 },
+                { q: "¿Qué empresa creó a Mickey Mouse?", options: ["Warner Bros", "Disney", "Universal", "Pixar"], ans: 1 },
+                { q: "¿Quién interpretó a Jack en Titanic?", options: ["Brad Pitt", "Tom Cruise", "Leonardo DiCaprio", "Johnny Depp"], ans: 2 },
+                { q: "¿Cuál es la película más taquillera de la historia?", options: ["Avatar", "Avengers: Endgame", "Titanic", "Star Wars"], ans: 0 }
+            ]
+        };
+
+        let triviaState = { category: null, qIndex: 0, score: 0, timer: 15, interval: null, questions: [] };
+
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('is-flex', 'is-block'); });
+            document.getElementById(viewId).classList.add('is-flex');
+            
+            if (viewId === 'view-menu') {
+                searchQuery = ''; activeTags = [];
+                document.getElementById('search-input').value = '';
+                document.querySelectorAll('[id^="tag-btn-"]').forEach(btn => btn.classList.replace('bg-gray-800', 'bg-gray-100'));
+                updateClientMenu();
+            }
+            if (viewId === 'view-game-talk') {
+                if (!activeGameCategory) selectGameCategory('rompehielos'); 
+            }
+            if (viewId === 'view-game-trivia') {
+                resetTriviaUI();
+            }
+            if (viewId === 'view-admin') {
+                updateAdminList();
+                populateCategorySelect();
+                document.getElementById('admin-wifi-ssid').value = wifiData.ssid;
+                document.getElementById('admin-wifi-pass').value = wifiData.pass;
+            }
+            if (viewId === 'view-wifi') {
+                document.getElementById('wifi-ssid-display').innerText = wifiData.ssid;
+                document.getElementById('wifi-pass-display').innerText = wifiData.pass;
+            }
+            window.scrollTo(0,0);
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                document.getElementById('login-user').value = '';
+                document.getElementById('login-pass').value = '';
+                showView('view-admin');
+            } else {
+                showToast("Usuario o contraseña incorrectos", "error");
+            }
+        }
+
+        function saveWifiSettings() {
+            const newSsid = document.getElementById('admin-wifi-ssid').value.trim();
+            const newPass = document.getElementById('admin-wifi-pass').value.trim();
+            
+            if (!newSsid || !newPass) {
+                showToast("El nombre y contraseña no pueden estar vacíos", "error");
+                return;
+            }
+            wifiData = { ssid: newSsid, pass: newPass };
+            localStorage.setItem('restaurant_wifi_v2', JSON.stringify(wifiData));
+            showToast("Configuración Wi-Fi guardada", "success");
+        }
+
+        function renderGameCategories() {
+            const container = document.getElementById('game-categories');
+            container.innerHTML = '';
+            for (let key in gameDB) {
+                const cat = gameDB[key];
+                const isActive = activeGameCategory === key;
+                const activeClass = isActive ? `${cat.bg} ${cat.border} ${cat.text} shadow-md transform scale-105` : "bg-white border-gray-100 text-gray-400 hover:bg-gray-50";
+                container.innerHTML += `
+                    <button onclick="selectGameCategory('${key}')" class="flex-shrink-0 px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 border-2 transition-all cursor-pointer ${activeClass}">
+                        <i class="ph ${cat.icon} text-xl"></i> ${cat.name}
+                    </button>`;
+            }
+        }
+
+        function selectGameCategory(key) {
+            activeGameCategory = key;
+            const cat = gameDB[key];
+            renderGameCategories();
+            
+            document.getElementById('game-icon').className = `ph ${cat.icon} text-5xl ${cat.text} mb-2 transition-colors duration-300`;
+            document.getElementById('game-card').className = `w-full h-64 rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center border-2 ${cat.border} ${cat.bg} relative transition-all duration-300`;
+            
+            const label = document.getElementById('game-category-label');
+            label.innerText = cat.name;
+            label.className = `absolute top-4 text-xs font-black uppercase tracking-wider ${cat.text} transition-colors`;
+            
+            const btn = document.getElementById('game-btn');
+            btn.className = `mt-8 text-white font-bold text-lg px-8 py-4 rounded-full shadow-xl active:scale-95 transition-all w-full ${cat.btn}`;
+            btn.disabled = false;
+            
+            nextQuestion(); 
+        }
+
+        function nextQuestion() {
+            if (!activeGameCategory) return;
+            const qElement = document.getElementById('game-question');
+            const cat = gameDB[activeGameCategory];
+            const questions = cat.questions;
+            
+            qElement.style.opacity = 0;
+            qElement.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                const random = questions[Math.floor(Math.random() * questions.length)];
+                qElement.innerText = random;
+                qElement.style.opacity = 1;
+                qElement.style.transform = 'translateY(0)';
+                const textColorClass = cat.text.replace('600', '800'); 
+                qElement.className = `text-xl font-bold ${textColorClass} leading-snug transition-all duration-300`;
+            }, 300);
+        }
+
+        function resetTriviaUI() {
+            clearInterval(triviaState.interval);
+            document.getElementById('trivia-categories-screen').classList.remove('hidden');
+            document.getElementById('trivia-categories-screen').classList.add('flex');
+            document.getElementById('trivia-active-screen').classList.add('hidden');
+            document.getElementById('trivia-active-screen').classList.remove('flex');
+            document.getElementById('trivia-result-screen').classList.add('hidden');
+            document.getElementById('trivia-result-screen').classList.remove('flex');
+        }
+
+        function startTrivia(categoryKey) {
+            triviaState.category = categoryKey;
+            triviaState.questions = [...triviaQuestions[categoryKey]].sort(() => Math.random() - 0.5);
+            triviaState.qIndex = 0;
+            triviaState.score = 0;
+
+            document.getElementById('trivia-categories-screen').classList.add('hidden');
+            document.getElementById('trivia-categories-screen').classList.remove('flex');
+            document.getElementById('trivia-active-screen').classList.remove('hidden');
+            document.getElementById('trivia-active-screen').classList.add('flex');
+
+            loadTriviaQuestion();
+        }
+
+        function loadTriviaQuestion() {
+            clearInterval(triviaState.interval);
+            const currentQ = triviaState.questions[triviaState.qIndex];
+            
+            document.getElementById('trivia-progress').innerText = `Pregunta ${triviaState.qIndex + 1}/${triviaState.questions.length}`;
+            document.getElementById('trivia-question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('trivia-options');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-white border border-purple-200 text-gray-700 font-bold py-4 px-6 rounded-2xl shadow-sm hover:bg-purple-50 active:scale-95 transition-all text-left flex justify-between items-center";
+                btn.innerHTML = `<span>${opt}</span> <i class="ph ph-circle text-gray-300 text-xl trivia-icon"></i>`;
+                btn.onclick = () => answerTrivia(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            triviaState.timer = 15;
+            document.getElementById('trivia-timer-text').innerText = triviaState.timer;
+            document.getElementById('trivia-timer-container').classList.replace('text-red-500', 'text-purple-600');
+            document.getElementById('trivia-timer-container').classList.replace('bg-red-100', 'bg-purple-100');
+
+            triviaState.interval = setInterval(() => {
+                triviaState.timer--;
+                document.getElementById('trivia-timer-text').innerText = triviaState.timer;
+                
+                if (triviaState.timer <= 5) {
+                    document.getElementById('trivia-timer-container').classList.replace('text-purple-600', 'text-red-500');
+                    document.getElementById('trivia-timer-container').classList.replace('bg-purple-100', 'bg-red-100');
+                }
+
+                if (triviaState.timer <= 0) {
+                    clearInterval(triviaState.interval);
+                    autoFailTrivia();
+                }
+            }, 1000);
+        }
+
+        function answerTrivia(selectedIndex, btnElement) {
+            clearInterval(triviaState.interval);
+            const currentQ = triviaState.questions[triviaState.qIndex];
+            const buttons = document.getElementById('trivia-options').querySelectorAll('button');
+            buttons.forEach(b => b.onclick = null);
+
+            if (selectedIndex === currentQ.ans) {
+                triviaState.score++;
+                btnElement.classList.replace('border-purple-200', 'border-green-500');
+                btnElement.classList.replace('text-gray-700', 'text-green-700');
+                btnElement.classList.add('bg-green-50');
+                btnElement.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-xl";
+            } else {
+                btnElement.classList.replace('border-purple-200', 'border-red-500');
+                btnElement.classList.replace('text-gray-700', 'text-red-700');
+                btnElement.classList.add('bg-red-50');
+                btnElement.querySelector('.trivia-icon').className = "ph-fill ph-x-circle text-red-500 text-xl";
+                
+                const correctBtn = buttons[currentQ.ans];
+                correctBtn.classList.replace('border-purple-200', 'border-green-500');
+                correctBtn.classList.add('bg-green-50', 'text-green-700');
+                correctBtn.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-xl";
+            }
+            setTimeout(nextTriviaQuestion, 1500);
+        }
+
+        function autoFailTrivia() {
+            const currentQ = triviaState.questions[triviaState.qIndex];
+            const buttons = document.getElementById('trivia-options').querySelectorAll('button');
+            buttons.forEach(b => b.onclick = null);
+
+            const correctBtn = buttons[currentQ.ans];
+            correctBtn.classList.replace('border-purple-200', 'border-green-500');
+            correctBtn.classList.add('bg-green-50', 'text-green-700');
+            correctBtn.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-xl";
+
+            setTimeout(nextTriviaQuestion, 1500);
+        }
+
+        function nextTriviaQuestion() {
+            triviaState.qIndex++;
+            if (triviaState.qIndex < triviaState.questions.length) {
+                loadTriviaQuestion();
+            } else {
+                showTriviaResults();
+            }
+        }
+
+        function showTriviaResults() {
+            document.getElementById('trivia-active-screen').classList.add('hidden');
+            document.getElementById('trivia-active-screen').classList.remove('flex');
+            document.getElementById('trivia-result-screen').classList.remove('hidden');
+            document.getElementById('trivia-result-screen').classList.add('flex');
+            document.getElementById('trivia-score-text').innerText = triviaState.score;
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value.toLowerCase();
+            updateClientMenu();
+        }
+
+        function toggleTag(tag) {
+            const btn = document.getElementById(`tag-btn-${tag}`);
+            if (activeTags.includes(tag)) {
+                activeTags = activeTags.filter(t => t !== tag);
+                btn.classList.replace('bg-gray-800', 'bg-gray-100');
+                btn.classList.replace('text-white', 'text-gray-600');
+            } else {
+                activeTags.push(tag);
+                btn.classList.replace('bg-gray-100', 'bg-gray-800');
+                btn.classList.replace('text-gray-600', 'text-white');
+            }
+            updateClientMenu();
+        }
+
+        function updateClientMenu() {
+            const container = document.getElementById('menu-content');
+            container.innerHTML = '';
+
+            let filteredData = menuData.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchQuery) || item.description.toLowerCase().includes(searchQuery);
+                const matchesVegan = activeTags.includes('vegan') ? item.isVegan : true;
+                const matchesGf = activeTags.includes('gf') ? item.isGlutenFree : true;
+                const matchesSpicy = activeTags.includes('spicy') ? item.isSpicy : true;
+                return matchesSearch && matchesVegan && matchesGf && matchesSpicy;
+            });
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-gray-400"><i class="ph ph-magnifying-glass text-4xl mb-2"></i><p>No se encontraron platos.</p></div>`;
+                return;
+            }
+
+            const featured = filteredData.filter(i => i.featured && !i.outOfStock).sort((a,b)=>a.order-b.order);
+            if (featured.length > 0 && searchQuery === '' && activeTags.length === 0) {
+                container.innerHTML += `<h3 class="font-black text-gray-800 mb-3 text-lg flex items-center gap-2"><i class="ph-fill ph-star text-yellow-500"></i> Recomendaciones del Chef</h3>`;
+                let carousel = `<div class="flex overflow-x-auto hide-scrollbar gap-4 mb-8 pb-2">`;
+                featured.forEach(item => {
+                    carousel += `
+                    <div class="flex-shrink-0 w-64 bg-white rounded-2xl shadow-md overflow-hidden relative border border-gray-100">
+                        <div class="h-32 bg-cover bg-center" style="background-image: url('${item.image || 'https://placehold.co/400x300/eee/999?text=Sin+Imagen'}')"></div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-gray-800 text-lg leading-tight mb-1">${item.name}</h4>
+                            <p class="font-black text-brand-600">$${item.price}</p>
+                        </div>
+                        <button onclick="addToCart(${item.id})" class="absolute bottom-4 right-4 bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg active:scale-95"><i class="ph ph-plus font-bold"></i></button>
+                    </div>`;
+                });
+                carousel += `</div>`;
+                container.innerHTML += carousel;
+            }
+
+            const categories = {};
+            filteredData.sort((a,b)=>a.order-b.order).forEach(item => {
+                if(!categories[item.category]) categories[item.category] = { name: item.category, items: [], minOrder: item.order };
+                categories[item.category].items.push(item);
+                if(item.order < categories[item.category].minOrder) categories[item.category].minOrder = item.order;
+            });
+
+            const sortedCategories = Object.values(categories).sort((a,b)=>a.minOrder - b.minOrder);
+
+            sortedCategories.forEach(cat => {
+                let html = `<h3 class="font-black text-gray-800 text-xl mb-4 mt-6 border-b-2 border-brand-500 pb-1 inline-block">${cat.name}</h3><div class="flex flex-col gap-4">`;
+                
+                cat.items.forEach(item => {
+                    let tagsHtml = '';
+                    if(item.isVegan) tagsHtml += `<span title="Vegano" class="text-green-500"><i class="ph-fill ph-leaf"></i></span>`;
+                    if(item.isGlutenFree) tagsHtml += `<span title="Sin TACC" class="text-amber-600"><i class="ph-fill ph-grains-slash"></i></span>`;
+                    if(item.isSpicy) tagsHtml += `<span title="Picante" class="text-red-500"><i class="ph-fill ph-fire"></i></span>`;
+                    
+                    const isOut = item.outOfStock;
+                    const grayscale = isOut ? 'grayscale opacity-60' : '';
+                    
+                    html += `
+                    <div class="bg-white p-3 rounded-2xl shadow-sm flex gap-4 ${grayscale} relative border border-gray-100">
+                        <div class="w-24 h-24 rounded-xl bg-cover bg-center flex-shrink-0 border border-gray-100" style="background-image: url('${item.image || 'https://placehold.co/400x300/eee/999?text=Sin+Imagen'}')"></div>
+                        <div class="flex-1 py-1 pr-2 flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-gray-800 leading-tight pr-2">${item.name}</h4>
+                                <div class="flex gap-1 text-sm">${tagsHtml}</div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">${item.description}</p>
+                            <div class="mt-auto flex justify-between items-end">
+                                ${isOut 
+                                    ? `<span class="font-bold text-red-500 text-sm bg-red-50 border border-red-200 px-2 py-0.5 rounded-md mt-2">AGOTADO</span>`
+                                    : `<p class="font-black text-brand-600">$${item.price}</p>`
+                                }
+                            </div>
+                        </div>
+                        ${!isOut ? `<button onclick="addToCart(${item.id})" class="absolute bottom-3 right-3 bg-gray-100 hover:bg-brand-50 text-brand-600 w-8 h-8 rounded-full flex items-center justify-center active:scale-95 transition-transform"><i class="ph ph-plus font-bold"></i></button>` : ''}
+                    </div>`;
+                });
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function addToCart(id) {
+            const item = menuData.find(i => i.id === id);
+            if(!item || item.outOfStock) return;
+            const existing = orderCart.find(i => i.id === id);
+            if(existing) { existing.qty++; } else { orderCart.push({...item, qty: 1}); }
+            updateCartBtn();
+            showToast(`Se añadió ${item.name}`, "success");
+        }
+
+        function updateCartBtn() {
+            const btn = document.getElementById('cart-float-btn');
+            const totalItems = orderCart.reduce((sum, item) => sum + item.qty, 0);
+            if(totalItems > 0) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+                document.getElementById('cart-float-text').innerText = `Tu Pedido (${totalItems})`;
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        }
+
+        function openCart() {
+            renderCart();
+            document.getElementById('cart-modal').classList.remove('hidden');
+            document.getElementById('cart-modal').classList.add('flex');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').classList.add('hidden');
+            document.getElementById('cart-modal').classList.remove('flex');
+        }
+
+        function changeQty(id, delta) {
+            const item = orderCart.find(i => i.id === id);
+            if(!item) return;
+            item.qty += delta;
+            if(item.qty <= 0) { orderCart = orderCart.filter(i => i.id !== id); }
+            renderCart();
+            updateCartBtn();
+            if(orderCart.length === 0) closeCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let total = 0;
+            orderCart.forEach(item => {
+                total += item.price * item.qty;
+                container.innerHTML += `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-800 text-sm">${item.name}</h4>
+                        <p class="text-brand-600 font-black text-xs">$${item.price}</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-full px-2 py-1 shadow-sm">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 flex justify-center items-center rounded-full text-gray-500 active:bg-gray-100"><i class="ph ph-minus"></i></button>
+                        <span class="font-bold text-sm w-4 text-center">${item.qty}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 flex justify-center items-center rounded-full text-gray-500 active:bg-gray-100"><i class="ph ph-plus"></i></button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('cart-total').innerText = `$${total}`;
+        }
+
+        function populateCategorySelect() {
+            const select = document.getElementById('admin-category-select');
+            const categories = [...new Set(menuData.map(item => item.category))];
+            select.innerHTML = '';
+            categories.forEach(c => { select.innerHTML += `<option value="${c}">${c}</option>`; });
+            select.innerHTML += `<option value="NEW">+ Nueva Categoría...</option>`;
+            checkNewCategory();
+        }
+
+        function checkNewCategory() {
+            const select = document.getElementById('admin-category-select');
+            const newCatInput = document.getElementById('admin-category-new');
+            if(select.value === 'NEW') {
+                newCatInput.classList.remove('hidden');
+                newCatInput.focus();
+            } else {
+                newCatInput.classList.add('hidden');
+            }
+        }
+
+        function updateAdminList() {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = '';
+            [...menuData].sort((a,b)=>a.order-b.order).forEach(item => {
+                const isOut = item.outOfStock ? '<span class="text-xs bg-red-100 text-red-600 px-1 rounded ml-1 border border-red-200">Agotado</span>' : '';
+                list.innerHTML += `
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+                    <div class="flex flex-col flex-1 pr-2">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">${item.category} (Ord: ${item.order})</span>
+                        <span class="font-bold text-gray-800 text-sm leading-tight">${item.name} ${item.featured ? '⭐' : ''} ${isOut}</span>
+                        <span class="text-xs font-black text-brand-600">$${item.price}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editDish(${item.id})" class="bg-blue-50 text-blue-600 p-2 rounded-lg border border-blue-100 active:scale-95"><i class="ph ph-pencil-simple"></i></button>
+                        <button onclick="deleteDish(${item.id})" class="bg-red-50 text-red-600 p-2 rounded-lg border border-red-100 active:scale-95"><i class="ph ph-trash"></i></button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function saveDish() {
+            let catVal = document.getElementById('admin-category-select').value;
+            if(catVal === 'NEW') {
+                catVal = document.getElementById('admin-category-new').value.trim();
+                if(!catVal) { showToast("Escribe un nombre para la categoría nueva", "error"); return; }
+            }
+
+            const name = document.getElementById('admin-name').value;
+            const price = document.getElementById('admin-price').value;
+            if(!name || !price) { showToast("El nombre y el precio son obligatorios", "error"); return; }
+
+            const dish = {
+                id: editingId || Date.now(), 
+                category: catVal,
+                name: name,
+                order: parseInt(document.getElementById('admin-order').value) || 1,
+                price: parseFloat(price),
+                description: document.getElementById('admin-desc').value,
+                image: document.getElementById('admin-image').value,
+                featured: document.getElementById('admin-featured').checked,
+                isVegan: document.getElementById('admin-vegan').checked,
+                isGlutenFree: document.getElementById('admin-gf').checked,
+                isSpicy: document.getElementById('admin-spicy').checked,
+                outOfStock: document.getElementById('admin-outofstock').checked
+            };
+
+            if(editingId) {
+                menuData = menuData.map(item => item.id === editingId ? dish : item);
+            } else {
+                menuData.push(dish);
+            }
+
+            localStorage.setItem('restaurant_menu_v2', JSON.stringify(menuData));
+            showToast(editingId ? "Plato actualizado con éxito" : "Plato guardado con éxito", "success");
+            
+            resetAdminForm();
+            updateAdminList();
+            populateCategorySelect();
+        }
+
+        function editDish(id) {
+            const dish = menuData.find(i => i.id === id);
+            if(!dish) return;
+            
+            editingId = id;
+            document.getElementById('admin-form-title').innerText = "Editar Plato";
+            
+            const select = document.getElementById('admin-category-select');
+            if([...select.options].some(o => o.value === dish.category)) {
+                select.value = dish.category;
+                checkNewCategory();
+            } else {
+                select.value = 'NEW';
+                checkNewCategory();
+                document.getElementById('admin-category-new').value = dish.category;
+            }
+
+            document.getElementById('admin-name').value = dish.name;
+            document.getElementById('admin-order').value = dish.order || 1;
+            document.getElementById('admin-price').value = dish.price;
+            document.getElementById('admin-desc').value = dish.description;
+            document.getElementById('admin-image').value = dish.image || '';
+            document.getElementById('admin-featured').checked = dish.featured;
+            document.getElementById('admin-vegan').checked = dish.isVegan;
+            document.getElementById('admin-gf').checked = dish.isGlutenFree;
+            document.getElementById('admin-spicy').checked = dish.isSpicy;
+            document.getElementById('admin-outofstock').checked = dish.outOfStock;
+            
+            document.getElementById('admin-cancel-btn').classList.remove('hidden');
+            document.querySelector('#view-admin').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetAdminForm() {
+            editingId = null;
+            document.getElementById('admin-form-title').innerText = "Agregar Nuevo Plato";
+            document.getElementById('admin-category-new').value = '';
+            document.getElementById('admin-name').value = '';
+            document.getElementById('admin-order').value = '1';
+            document.getElementById('admin-price').value = '';
+            document.getElementById('admin-desc').value = '';
+            document.getElementById('admin-image').value = '';
+            document.getElementById('admin-featured').checked = false;
+            document.getElementById('admin-vegan').checked = false;
+            document.getElementById('admin-gf').checked = false;
+            document.getElementById('admin-spicy').checked = false;
+            document.getElementById('admin-outofstock').checked = false;
+            document.getElementById('admin-cancel-btn').classList.add('hidden');
+            populateCategorySelect();
+        }
+
+        function deleteDish(id) {
+            if(confirm("¿Estás seguro de que deseas eliminar este plato definitivamente?")) {
+                menuData = menuData.filter(item => item.id !== id);
+                localStorage.setItem('restaurant_menu_v2', JSON.stringify(menuData));
+                updateAdminList();
+                showToast("Plato eliminado", "error");
+            }
+        }
+
+        function copyWifi() {
+            navigator.clipboard.writeText(wifiData.pass).then(() => { 
+                showToast("Contraseña copiada al portapapeles", "success"); 
+            }).catch(() => { 
+                showToast("Error al copiar", "error"); 
+            });
+        }
+
+        function showToast(msg, type="success") {
+            const toast = document.createElement('div');
+            const color = type === 'success' ? 'bg-gray-900' : 'bg-red-500';
+            const icon = type === 'success' ? 'ph-check-circle' : 'ph-warning-circle';
+            
+            toast.className = `${color} text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-bold opacity-0 transition-all duration-300 transform -translate-y-4 border border-white/10`;
+            toast.innerHTML = `<i class="ph-fill ${icon} text-xl"></i> ${msg}`;
+            
+            const container = document.getElementById('toast-container');
+            container.appendChild(toast);
+            
+            requestAnimationFrame(() => { 
+                toast.classList.remove('opacity-0', '-translate-y-4'); 
+                toast.classList.add('opacity-100', 'translate-y-0'); 
+            });
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.onload = () => { 
+            showView('view-home'); 
+        }
+    </script>
+</body>
+</html>
