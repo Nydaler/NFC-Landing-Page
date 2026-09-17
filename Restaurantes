@@ -2,434 +2,494 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Interactivo</title>
-    <!-- Incluimos Tailwind pero respaldado con estilos propios para evitar fallos si se abre localmente -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menú Interactivo - El Gran Sabor</title>
+    <!-- Tailwind CSS (CDN para despliegue rápido en Vercel) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
     <style>
+        /* Clases utilitarias para el manejo de vistas */
         .view-section { display: none !important; }
         .is-flex { display: flex !important; }
         .is-block { display: block !important; }
+        
+        /* Ocultar scrollbar pero permitir scroll */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Animaciones suaves */
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Ajustes para evitar zoom en inputs en iOS */
+        input, select, textarea { font-size: 16px !important; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 antialiased selection:bg-brand-200">
     
     <script>
+        // Configuración de la paleta de colores de Tailwind
         tailwind.config = {
             theme: {
-                extend: { colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 500: '#22c55e', 600: '#16a34a' } } }
+                extend: { 
+                    colors: { 
+                        brand: { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 500: '#22c55e', 600: '#16a34a' } 
+                    } 
+                }
             }
         }
     </script>
 
     <!-- VISTA HOME -->
     <div id="view-home" class="view-section is-flex w-full max-w-md mx-auto bg-gray-50 min-h-screen flex-col shadow-2xl relative">
-        <div class="h-64 bg-cover bg-center relative flex-shrink-0 rounded-b-3xl shadow-sm" style="background-image: url('https://placehold.co/800x600/333/fff?text=Restaurante');">
-            <div class="absolute inset-0 bg-black/40 rounded-b-3xl"></div>
-            <div class="absolute bottom-4 left-6 text-white">
-                <h1 class="text-3xl font-black shadow-sm">El Gran Sabor</h1>
-                <p class="text-sm font-medium flex items-center gap-1 mt-1"><i class="ph-fill ph-map-pin"></i> Mesa 12</p>
+        <div class="h-64 bg-cover bg-center relative flex-shrink-0 rounded-b-3xl shadow-sm" style="background-image: url('https://placehold.co/800x600/111/fff?text=El+Gran+Sabor');">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-b-3xl"></div>
+            <div class="absolute bottom-6 left-6 text-white">
+                <h1 class="text-4xl font-black shadow-sm tracking-tight">El Gran Sabor</h1>
+                <p class="text-sm font-medium flex items-center gap-1 mt-2 bg-black/40 inline-flex px-3 py-1 rounded-full backdrop-blur-sm"><i class="ph-fill ph-map-pin text-brand-500"></i> Escaneado en Mesa 12</p>
             </div>
         </div>
 
-        <div class="px-6 py-8 flex flex-col gap-4 flex-1">
-            <button onclick="showView('view-menu')" class="bg-gray-900 text-white p-5 rounded-3xl shadow-lg flex items-center justify-between active:scale-95 transition-transform">
+        <div class="px-6 py-8 flex flex-col gap-4 flex-1 z-10 -mt-6">
+            <button onclick="showView('view-menu')" class="bg-gray-900 text-white p-5 rounded-3xl shadow-xl flex items-center justify-between active:scale-95 transition-transform hover:bg-gray-800 border border-gray-700">
                 <div class="flex items-center gap-4">
-                    <div class="bg-white/20 p-3 rounded-xl"><i class="ph-fill ph-book-open text-2xl"></i></div>
+                    <div class="bg-white/10 p-3 rounded-2xl"><i class="ph-fill ph-book-open text-3xl text-brand-500"></i></div>
                     <div class="text-left">
-                        <span class="font-black text-lg block">Ver Menú</span>
-                        <span class="text-xs text-gray-300">Explora nuestros platos</span>
+                        <span class="font-black text-xl block">Ver Menú</span>
+                        <span class="text-sm text-gray-400 font-medium">Explora nuestros platos</span>
                     </div>
                 </div>
-                <i class="ph ph-caret-right text-gray-400 text-xl"></i>
+                <i class="ph ph-caret-right text-gray-500 text-xl"></i>
             </button>
 
-            <button onclick="showView('view-game-menu')" class="bg-blue-600 text-white p-5 rounded-3xl shadow-lg flex items-center justify-between active:scale-95 transition-transform">
+            <button onclick="showView('view-game-menu')" class="bg-indigo-600 text-white p-5 rounded-3xl shadow-xl flex items-center justify-between active:scale-95 transition-transform hover:bg-indigo-700 border border-indigo-500">
                 <div class="flex items-center gap-4">
-                    <div class="bg-white/20 p-3 rounded-xl"><i class="ph-fill ph-game-controller text-2xl"></i></div>
+                    <div class="bg-white/20 p-3 rounded-2xl"><i class="ph-fill ph-game-controller text-3xl text-indigo-200"></i></div>
                     <div class="text-left">
-                        <span class="font-black text-lg block">Juegos de Mesa</span>
-                        <span class="text-xs text-blue-200">Diviértete mientras esperas</span>
+                        <span class="font-black text-xl block">Juegos de Mesa</span>
+                        <span class="text-sm text-indigo-200 font-medium">Diviértete mientras esperas</span>
                     </div>
                 </div>
-                <i class="ph ph-caret-right text-blue-200 text-xl"></i>
+                <i class="ph ph-caret-right text-indigo-300 text-xl"></i>
             </button>
 
             <div class="grid grid-cols-2 gap-4 mt-2">
-                <button onclick="showView('view-wifi')" class="bg-white border border-gray-200 text-gray-800 p-5 rounded-3xl shadow-sm flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform">
-                    <div class="bg-brand-50 p-3 rounded-full"><i class="ph-fill ph-wifi-high text-2xl text-brand-600"></i></div>
+                <button onclick="showView('view-wifi')" class="bg-white border-2 border-gray-100 text-gray-800 p-5 rounded-3xl shadow-md flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform hover:border-blue-200">
+                    <div class="bg-blue-50 p-4 rounded-full"><i class="ph-fill ph-wifi-high text-3xl text-blue-600"></i></div>
                     <span class="font-bold text-sm">Wi-Fi Gratis</span>
                 </button>
-                <button onclick="showView('view-reservas')" class="bg-white border border-gray-200 text-gray-800 p-5 rounded-3xl shadow-sm flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform">
-                    <div class="bg-orange-50 p-3 rounded-full"><i class="ph-fill ph-calendar-check text-2xl text-orange-500"></i></div>
-                    <span class="font-bold text-sm text-center leading-tight">Reservas<br>y Preg.</span>
+                <button onclick="showView('view-reservas')" class="bg-white border-2 border-gray-100 text-gray-800 p-5 rounded-3xl shadow-md flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform hover:border-orange-200">
+                    <div class="bg-orange-50 p-4 rounded-full"><i class="ph-fill ph-calendar-check text-3xl text-orange-500"></i></div>
+                    <span class="font-bold text-sm text-center leading-tight">Reservas<br>& Ayuda</span>
                 </button>
             </div>
         </div>
 
-        <div class="p-4 text-center mt-auto pb-6">
-            <button onclick="showView('view-admin-login')" class="text-xs text-gray-400 underline font-medium">Acceso Restaurante (Admin)</button>
+        <div class="p-6 text-center mt-auto">
+            <button onclick="showView('view-admin-login')" class="text-xs text-gray-400 hover:text-gray-600 underline font-medium transition-colors">Acceso Restaurante (Admin)</button>
         </div>
     </div>
 
     <!-- VISTA MENU (Cliente) -->
     <div id="view-menu" class="view-section w-full max-w-md mx-auto bg-gray-50 min-h-screen flex-col pb-24 relative shadow-2xl">
-        <div class="bg-white px-5 pt-6 pb-2 sticky top-0 z-20 shadow-sm rounded-b-2xl">
+        <div class="bg-white px-5 pt-6 pb-2 sticky top-0 z-20 shadow-sm rounded-b-3xl">
             <div class="flex items-center gap-3 mb-4">
-                <button onclick="showView('view-home')" class="bg-gray-100 p-2 rounded-full text-gray-700 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-                <h2 class="font-black text-xl flex-1 text-gray-800">Menú</h2>
+                <button onclick="showView('view-home')" class="bg-gray-100 p-2 rounded-full text-gray-700 active:scale-95 transition-transform hover:bg-gray-200"><i class="ph ph-arrow-left text-xl"></i></button>
+                <h2 class="font-black text-2xl flex-1 text-gray-800 tracking-tight">Menú</h2>
             </div>
             <div class="relative mb-3">
-                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar platos o ingredientes..." class="w-full bg-gray-100 text-sm rounded-full py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar platos o ingredientes..." class="w-full bg-gray-100 text-sm font-medium rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-shadow border border-transparent focus:border-brand-200">
             </div>
-            <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2" id="filter-tags">
-                <button id="tag-btn-vegan" onclick="toggleTag('vegan')" class="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200 transition-colors">🌿 Vegano</button>
-                <button id="tag-btn-gf" onclick="toggleTag('gf')" class="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200 transition-colors">🌾 Sin TACC</button>
-                <button id="tag-btn-spicy" onclick="toggleTag('spicy')" class="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200 transition-colors">🌶️ Picante</button>
+            <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-3 pt-1" id="filter-tags">
+                <button id="tag-btn-vegan" onclick="toggleTag('vegan')" class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 border border-gray-200 shadow-sm transition-all flex items-center gap-1"><i class="ph-fill ph-leaf text-green-500 text-sm"></i> Vegano</button>
+                <button id="tag-btn-gf" onclick="toggleTag('gf')" class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 border border-gray-200 shadow-sm transition-all flex items-center gap-1"><i class="ph-fill ph-grains-slash text-amber-600 text-sm"></i> Sin TACC</button>
+                <button id="tag-btn-spicy" onclick="toggleTag('spicy')" class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 border border-gray-200 shadow-sm transition-all flex items-center gap-1"><i class="ph-fill ph-fire text-red-500 text-sm"></i> Picante</button>
             </div>
         </div>
         
-        <div class="px-4 py-4" id="menu-content"></div>
+        <div class="px-5 py-4" id="menu-content"></div>
 
         <!-- Botón flotante de Tu Pedido -->
-        <button id="cart-float-btn" onclick="openCart()" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-brand-600 text-white font-bold px-6 py-3 rounded-full shadow-2xl items-center gap-3 z-30 active:scale-95 transition-transform whitespace-nowrap">
-            <i class="ph ph-list-checks text-xl"></i>
-            <span id="cart-float-text">Tu Pedido (0)</span>
+        <button id="cart-float-btn" onclick="openCart()" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white font-bold px-8 py-4 rounded-full shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] items-center gap-3 z-30 active:scale-95 transition-all hover:bg-black whitespace-nowrap border border-gray-700">
+            <i class="ph ph-list-checks text-2xl text-brand-400"></i>
+            <span id="cart-float-text" class="text-lg tracking-tight">Tu Pedido (0)</span>
         </button>
     </div>
 
     <!-- MODAL TU PEDIDO -->
-    <div id="cart-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end transition-opacity">
-        <div class="w-full max-w-md mx-auto bg-white rounded-t-3xl min-h-[50vh] max-h-[80vh] flex flex-col relative animate-[slideUp_0.3s_ease-out]">
-            <button onclick="closeCart()" class="absolute top-4 right-4 bg-gray-100 p-2 rounded-full text-gray-600 active:scale-95"><i class="ph ph-x"></i></button>
-            <div class="p-6 border-b border-gray-100">
-                <h2 class="text-2xl font-black text-gray-800">Tu Pedido</h2>
-                <p class="text-sm text-gray-500 font-medium text-brand-600 mt-1">¡Leéle esta lista al mozo para pedir! 📝</p>
+    <div id="cart-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex-col justify-end transition-opacity backdrop-blur-sm">
+        <div class="w-full max-w-md mx-auto bg-white rounded-t-[2rem] min-h-[50vh] max-h-[85vh] flex flex-col relative animate-[slideUp_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+            <button onclick="closeCart()" class="absolute top-6 right-6 bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-600 active:scale-95 transition-colors"><i class="ph ph-x text-lg"></i></button>
+            <div class="p-8 border-b border-gray-100">
+                <h2 class="text-3xl font-black text-gray-800 tracking-tight">Tu Pedido</h2>
+                <p class="text-sm font-bold text-brand-600 mt-2 bg-brand-50 inline-flex px-3 py-1 rounded-lg items-center gap-2">
+                    <i class="ph-fill ph-info"></i> ¡Leéle esta lista al mozo para pedir!
+                </p>
             </div>
-            <div id="cart-items" class="p-6 overflow-y-auto flex-1 flex flex-col gap-4"></div>
-            <div class="p-6 bg-gray-50 border-t border-gray-200 rounded-t-3xl shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)]">
-                <div class="flex justify-between items-end mb-4">
-                    <span class="text-gray-500 font-medium">Total Estimado</span>
-                    <span id="cart-total" class="text-3xl font-black text-gray-800">$0</span>
+            <div id="cart-items" class="p-6 overflow-y-auto flex-1 flex flex-col gap-4 bg-gray-50/50"></div>
+            <div class="p-8 bg-white border-t border-gray-100 rounded-t-3xl shadow-[0_-15px_30px_-15px_rgba(0,0,0,0.1)]">
+                <div class="flex justify-between items-end mb-6">
+                    <span class="text-gray-500 font-bold uppercase tracking-wider text-sm">Total Estimado</span>
+                    <span id="cart-total" class="text-4xl font-black text-gray-900 tracking-tight">$0</span>
                 </div>
-                <button onclick="closeCart()" class="w-full bg-brand-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform">Volver al Menú</button>
+                <button onclick="closeCart()" class="w-full bg-brand-600 text-white font-bold text-lg py-4 rounded-2xl shadow-xl shadow-brand-500/30 active:scale-95 transition-transform hover:bg-brand-500">Volver al Menú</button>
             </div>
         </div>
     </div>
 
     <!-- VISTA ADMIN LOGIN -->
     <div id="view-admin-login" class="view-section w-full max-w-md mx-auto bg-gray-100 min-h-screen flex-col justify-center px-6 relative shadow-2xl">
-        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-        <div class="bg-white p-8 rounded-3xl shadow-xl w-full text-center border border-gray-100 animate-[slideUp_0.3s_ease-out]">
-            <i class="ph-duotone ph-lock-key text-5xl text-gray-800 mb-4"></i>
-            <h2 class="text-2xl font-black text-gray-800 mb-6">Acceso Restringido</h2>
-            <div class="text-left mb-6 bg-blue-50 p-3 rounded-lg border border-blue-100 text-xs text-blue-600 font-medium">
-                <i class="ph-fill ph-info"></i> Usa <b>admin</b> y <b>123456</b> para entrar en esta demo.
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-3 rounded-full shadow-md text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-xl"></i></button>
+        <div class="bg-white p-8 rounded-[2rem] shadow-2xl w-full text-center border border-gray-100 animate-[fadeIn_0.3s_ease-out]">
+            <div class="bg-gray-900 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <i class="ph-duotone ph-lock-key text-4xl text-white"></i>
             </div>
-            <input type="text" id="login-user" placeholder="Usuario" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mb-3 focus:outline-none focus:border-gray-900">
-            <input type="password" id="login-pass" placeholder="Contraseña" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mb-6 focus:outline-none focus:border-gray-900">
-            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl active:scale-95 transition-transform">Ingresar</button>
+            <h2 class="text-2xl font-black text-gray-800 mb-2">Acceso Restringido</h2>
+            <p class="text-gray-500 text-sm mb-6 font-medium">Panel de administración del menú</p>
+            
+            <div class="text-left mb-6 bg-blue-50 p-4 rounded-2xl border border-blue-100 text-xs text-blue-700 font-medium flex gap-2 items-start">
+                <i class="ph-fill ph-info text-lg"></i> 
+                <span>Para propósitos de demostración, usa el usuario <b>admin</b> y contraseña <b>123456</b>.</span>
+            </div>
+
+            <div class="flex flex-col gap-4 mb-8">
+                <div class="relative">
+                    <i class="ph ph-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                    <input type="text" id="login-user" placeholder="Usuario" class="w-full bg-gray-50 border border-gray-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-colors">
+                </div>
+                <div class="relative">
+                    <i class="ph ph-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                    <input type="password" id="login-pass" placeholder="Contraseña" class="w-full bg-gray-50 border border-gray-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900 transition-colors">
+                </div>
+            </div>
+            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white font-bold text-lg py-4 rounded-2xl active:scale-95 transition-transform hover:bg-black shadow-lg">Ingresar al Panel</button>
         </div>
     </div>
 
     <!-- VISTA ADMIN (Panel de Control) -->
     <div id="view-admin" class="view-section w-full max-w-md mx-auto bg-gray-100 min-h-screen shadow-2xl flex-col pb-10">
-        <div class="bg-gray-900 text-white px-5 py-4 flex items-center gap-3 sticky top-0 z-10 shadow-md">
-            <button onclick="showView('view-home')" class="bg-gray-800 p-2 rounded-full text-white active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-            <h2 class="font-bold text-lg flex-1">Panel de Control</h2>
+        <div class="bg-gray-900 text-white px-6 py-5 flex items-center gap-4 sticky top-0 z-20 shadow-lg">
+            <button onclick="showView('view-home')" class="bg-gray-800 hover:bg-gray-700 p-2 rounded-full text-white active:scale-95 transition-colors"><i class="ph ph-arrow-left text-xl"></i></button>
+            <h2 class="font-bold text-xl flex-1 tracking-tight">Panel de Control</h2>
         </div>
+        
         <div class="p-5">
-            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6">
-                <h3 class="font-bold text-gray-800 mb-4">Configuración Wi-Fi</h3>
-                <div class="flex flex-col gap-3">
+            <div class="bg-white p-6 rounded-3xl shadow-sm mb-6 border border-gray-200">
+                <h3 class="font-black text-gray-800 text-lg mb-5 flex items-center gap-2"><i class="ph-fill ph-wifi-high text-blue-500"></i> Configuración Wi-Fi</h3>
+                <div class="flex flex-col gap-4">
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Nombre de la Red (SSID)</label>
-                        <input type="text" id="admin-wifi-ssid" placeholder="Ej: MiRestaurante_WIFI" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Nombre de la Red (SSID)</label>
+                        <input type="text" id="admin-wifi-ssid" placeholder="Ej: MiRestaurante_WIFI" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Contraseña</label>
-                        <input type="text" id="admin-wifi-pass" placeholder="Ej: clave123" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Contraseña</label>
+                        <input type="text" id="admin-wifi-pass" placeholder="Ej: clave123" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                     </div>
-                    <button onclick="saveWifiSettings()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl mt-2 active:scale-95 transition-transform"><i class="ph ph-floppy-disk mr-2"></i>Guardar Wi-Fi</button>
+                    <button onclick="saveWifiSettings()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl mt-2 active:scale-95 transition-transform shadow-md hover:bg-blue-700"><i class="ph ph-floppy-disk mr-2"></i>Guardar Red Wi-Fi</button>
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow-sm mb-6">
-                <h3 class="font-bold text-gray-800 mb-4" id="admin-form-title">Agregar Nuevo Plato</h3>
-                <div class="flex flex-col gap-3">
+            <div class="bg-white p-6 rounded-3xl shadow-sm mb-8 border border-gray-200">
+                <h3 class="font-black text-gray-800 text-lg mb-5 flex items-center gap-2" id="admin-form-title"><i class="ph-fill ph-plus-circle text-brand-500"></i> Agregar Nuevo Plato</h3>
+                <div class="flex flex-col gap-4">
                     <input type="hidden" id="admin-id">
                     
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Categoría</label>
-                        <select id="admin-category-select" onchange="checkNewCategory()" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900"></select>
-                        <input type="text" id="admin-category-new" placeholder="Escribe la nueva categoría..." class="hidden w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-2 focus:outline-none focus:border-gray-900">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Categoría</label>
+                        <select id="admin-category-select" onchange="checkNewCategory()" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-gray-900"></select>
+                        <input type="text" id="admin-category-new" placeholder="Escribe la nueva categoría..." class="hidden w-full bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm mt-2 font-medium focus:outline-none focus:border-blue-500 transition-all">
                     </div>
 
-                    <div class="flex gap-2">
+                    <div class="flex gap-3">
                         <div class="flex-1">
-                            <label class="text-xs font-bold text-gray-500 uppercase">Nombre</label>
-                            <input type="text" id="admin-name" placeholder="Ej: Milanesa..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Nombre del Plato</label>
+                            <input type="text" id="admin-name" placeholder="Ej: Milanesa a la Suiza..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-gray-900">
                         </div>
                         <div class="w-24">
-                            <label class="text-xs font-bold text-gray-500 uppercase">Orden</label>
-                            <input type="number" id="admin-order" value="1" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1" title="Menor número aparece primero">Orden ℹ️</label>
+                            <input type="number" id="admin-order" value="1" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-gray-900 text-center">
                         </div>
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Precio ($)</label>
-                        <input type="number" id="admin-price" placeholder="Ej: 4500" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">Descripción</label>
-                        <textarea id="admin-desc" placeholder="Ingredientes..." rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase">URL Imagen (Opcional)</label>
-                        <input type="text" id="admin-image" placeholder="https://..." class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-sm mt-1 focus:outline-none focus:border-gray-900">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Precio Final ($)</label>
+                        <input type="number" id="admin-price" placeholder="Ej: 4500" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-gray-900">
                     </div>
                     
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 grid grid-cols-2 gap-2 mt-2">
-                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-featured" class="w-4 h-4 accent-gray-900"> ⭐ Destacado</label>
-                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-vegan" class="w-4 h-4 accent-green-500"> 🌿 Vegano</label>
-                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-gf" class="w-4 h-4 accent-amber-600"> 🌾 Sin TACC</label>
-                        <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="checkbox" id="admin-spicy" class="w-4 h-4 accent-red-500"> 🌶️ Picante</label>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Descripción / Ingredientes</label>
+                        <textarea id="admin-desc" placeholder="Detalle de los ingredientes que componen el plato..." rows="3" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-gray-900"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">URL de la Imagen (Opcional)</label>
+                        <input type="text" id="admin-image" placeholder="https://..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm mt-1 font-medium focus:outline-none focus:border-gray-900 text-gray-500">
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 grid grid-cols-2 gap-3 mt-2">
+                        <label class="flex items-center gap-2 text-sm font-bold cursor-pointer"><input type="checkbox" id="admin-featured" class="w-5 h-5 accent-gray-900 rounded"> ⭐ Destacado</label>
+                        <label class="flex items-center gap-2 text-sm font-bold cursor-pointer text-green-700"><input type="checkbox" id="admin-vegan" class="w-5 h-5 accent-green-600 rounded"> 🌿 Vegano</label>
+                        <label class="flex items-center gap-2 text-sm font-bold cursor-pointer text-amber-700"><input type="checkbox" id="admin-gf" class="w-5 h-5 accent-amber-600 rounded"> 🌾 Sin TACC</label>
+                        <label class="flex items-center gap-2 text-sm font-bold cursor-pointer text-red-700"><input type="checkbox" id="admin-spicy" class="w-5 h-5 accent-red-600 rounded"> 🌶️ Picante</label>
                     </div>
 
-                    <label class="flex items-center gap-2 text-sm font-bold text-red-600 bg-red-50 p-3 rounded-lg border border-red-200 mt-2 cursor-pointer">
-                        <input type="checkbox" id="admin-outofstock" class="w-5 h-5 accent-red-600"> 🚫 Marcar como Agotado
+                    <label class="flex items-center gap-3 text-sm font-black text-red-600 bg-red-50 p-4 rounded-2xl border border-red-200 mt-2 cursor-pointer shadow-sm hover:bg-red-100 transition-colors">
+                        <input type="checkbox" id="admin-outofstock" class="w-6 h-6 accent-red-600 rounded"> 🚫 MARCAR COMO AGOTADO
                     </label>
 
-                    <button onclick="saveDish()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl mt-2 active:scale-95 transition-transform">Guardar Plato</button>
-                    <button onclick="resetAdminForm()" id="admin-cancel-btn" class="hidden w-full bg-gray-200 text-gray-700 font-bold py-2 rounded-xl mt-1 active:scale-95 transition-transform">Cancelar Edición</button>
+                    <button onclick="saveDish()" class="w-full bg-gray-900 text-white font-bold text-lg py-4 rounded-2xl mt-4 active:scale-95 transition-transform shadow-lg hover:bg-black">Guardar Plato en el Menú</button>
+                    <button onclick="resetAdminForm()" id="admin-cancel-btn" class="hidden w-full bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-2xl mt-2 active:scale-95 transition-transform hover:bg-gray-50">Cancelar Edición</button>
                 </div>
             </div>
-            <h3 class="font-bold text-gray-800 mb-3 ml-1">Menú Actual</h3>
+            
+            <div class="flex items-center justify-between mb-4 px-1">
+                <h3 class="font-black text-gray-800 text-xl">Menú Actual</h3>
+                <span class="text-xs font-bold bg-gray-200 text-gray-600 px-3 py-1 rounded-full" id="admin-total-items">0 items</span>
+            </div>
             <div id="admin-list" class="flex flex-col gap-3"></div>
         </div>
     </div>
 
     <!-- 1. Menú Principal de Juegos (HUB) -->
-    <div id="view-game-menu" class="view-section w-full max-w-md mx-auto bg-blue-50 min-h-screen flex-col items-center relative px-6 py-10 shadow-2xl">
-        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 z-10 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
+    <div id="view-game-menu" class="view-section w-full max-w-md mx-auto bg-indigo-50 min-h-screen flex-col items-center relative px-6 py-10 shadow-2xl">
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-md text-gray-800 z-10 active:scale-95 transition-transform hover:bg-gray-100"><i class="ph ph-arrow-left text-xl"></i></button>
         
-        <div class="text-center mt-12 mb-8">
-            <i class="ph-duotone ph-game-controller text-6xl text-blue-500 mb-4"></i>
-            <h2 class="text-3xl font-black text-gray-800">Sala de Juegos</h2>
-            <p class="text-gray-500 text-sm mt-2">Elige un juego para disfrutar la espera</p>
+        <div class="text-center mt-12 mb-10 w-full animate-[fadeIn_0.5s_ease-out]">
+            <div class="bg-indigo-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <i class="ph-duotone ph-game-controller text-6xl text-indigo-600"></i>
+            </div>
+            <h2 class="text-3xl font-black text-gray-900 tracking-tight">Sala de Juegos</h2>
+            <p class="text-indigo-600 font-medium text-sm mt-2">Elige un juego para disfrutar la espera</p>
         </div>
 
-        <div class="w-full flex flex-col gap-4">
-            <button onclick="showView('view-game-talk')" class="bg-white border-2 border-brand-100 p-5 rounded-2xl flex items-center gap-4 shadow-md active:scale-95 transition-transform text-left">
-                <div class="bg-brand-50 text-brand-600 p-4 rounded-xl flex-shrink-0"><i class="ph ph-chat-centered-text text-3xl"></i></div>
+        <div class="w-full flex flex-col gap-5">
+            <button onclick="showView('view-game-talk')" class="bg-white border border-brand-200 p-6 rounded-[2rem] flex items-center gap-5 shadow-lg active:scale-95 transition-all text-left hover:shadow-xl hover:-translate-y-1">
+                <div class="bg-brand-50 text-brand-500 p-4 rounded-2xl flex-shrink-0 shadow-inner"><i class="ph-fill ph-chat-centered-text text-4xl"></i></div>
                 <div class="flex-1">
-                    <h2 class="font-bold text-gray-800 text-lg">Charlas de Mesa</h2>
-                    <p class="text-xs text-gray-500 leading-tight mt-1">Rompehielos, debates y preguntas curiosas.</p>
+                    <h2 class="font-black text-gray-900 text-xl mb-1">Charlas de Mesa</h2>
+                    <p class="text-sm text-gray-500 font-medium leading-tight">Preguntas, rompehielos y debates.</p>
                 </div>
-                <i class="ph ph-caret-right text-xl text-gray-400"></i>
+                <i class="ph ph-caret-right text-2xl text-gray-300"></i>
             </button>
 
-            <button onclick="showView('view-game-trivia')" class="bg-white border-2 border-purple-100 p-5 rounded-2xl flex items-center gap-4 shadow-md active:scale-95 transition-transform text-left">
-                <div class="bg-purple-50 text-purple-600 p-4 rounded-xl flex-shrink-0"><i class="ph ph-timer text-3xl"></i></div>
+            <button onclick="showView('view-game-trivia')" class="bg-white border border-purple-200 p-6 rounded-[2rem] flex items-center gap-5 shadow-lg active:scale-95 transition-all text-left hover:shadow-xl hover:-translate-y-1">
+                <div class="bg-purple-50 text-purple-500 p-4 rounded-2xl flex-shrink-0 shadow-inner"><i class="ph-fill ph-timer text-4xl"></i></div>
                 <div class="flex-1">
-                    <h2 class="font-bold text-gray-800 text-lg">¡Quiz Trivia!</h2>
-                    <p class="text-xs text-gray-500 leading-tight mt-1">Pon a prueba tu conocimiento a contrarreloj.</p>
+                    <h2 class="font-black text-gray-900 text-xl mb-1">¡Quiz Trivia!</h2>
+                    <p class="text-sm text-gray-500 font-medium leading-tight">Pon a prueba tu conocimiento contra reloj.</p>
                 </div>
-                <i class="ph ph-caret-right text-xl text-gray-400"></i>
+                <i class="ph ph-caret-right text-2xl text-gray-300"></i>
             </button>
         </div>
     </div>
 
     <!-- 2. Juego: Charlas de Mesa (Preguntas Disparadoras) -->
     <div id="view-game-talk" class="view-section w-full max-w-md mx-auto bg-brand-50 min-h-screen flex-col items-center relative px-6 py-8 shadow-2xl">
-        <button onclick="showView('view-game-menu')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 z-10 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-        <div class="text-center mt-6 mb-6">
-            <i id="game-icon" class="ph ph-cards text-5xl text-brand-500 mb-2 transition-colors duration-300"></i>
-            <h2 class="text-2xl font-black text-gray-800">Charlas de Mesa</h2>
-            <p class="text-gray-500 text-sm mt-1">Elige una categoría para empezar</p>
+        <button onclick="showView('view-game-menu')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-md text-gray-800 z-10 active:scale-95 transition-transform hover:bg-gray-100"><i class="ph ph-arrow-left text-xl"></i></button>
+        <div class="text-center mt-6 mb-8 w-full">
+            <div class="bg-white/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <i id="game-icon" class="ph-fill ph-cards text-5xl text-brand-500 transition-colors duration-300"></i>
+            </div>
+            <h2 class="text-3xl font-black text-gray-900 tracking-tight">Charlas de Mesa</h2>
+            <p class="text-brand-700 font-medium text-sm mt-1">Elige una categoría para empezar</p>
         </div>
         
-        <div class="flex overflow-x-auto hide-scrollbar gap-3 w-full mb-6 pb-2 px-1" id="game-categories"></div>
+        <div class="flex overflow-x-auto hide-scrollbar gap-3 w-full mb-8 pb-2 px-1" id="game-categories"></div>
 
-        <div id="game-card" class="bg-white w-full h-64 rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center border-2 border-brand-100 relative transition-all duration-300">
-            <span id="game-category-label" class="absolute top-4 text-xs font-bold uppercase tracking-wider text-brand-500 transition-colors">Categoría</span>
-            <p id="game-question" class="text-xl font-bold text-gray-700 leading-snug transition-all duration-300">Toca una categoría para revelar la primera pregunta.</p>
+        <div id="game-card" class="bg-white w-full min-h-[16rem] rounded-[2rem] shadow-xl flex flex-col items-center justify-center p-8 text-center border-2 border-brand-100 relative transition-all duration-300">
+            <span id="game-category-label" class="absolute top-5 text-xs font-black uppercase tracking-widest text-brand-500 transition-colors bg-brand-50 px-3 py-1 rounded-full">Categoría</span>
+            <p id="game-question" class="text-2xl font-bold text-gray-800 leading-snug transition-all duration-300">Toca una categoría para revelar la primera pregunta.</p>
         </div>
         
-        <button onclick="nextQuestion()" id="game-btn" class="mt-8 bg-brand-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg active:scale-95 transition-transform w-full opacity-50 cursor-not-allowed" disabled>Siguiente Pregunta</button>
+        <button onclick="nextQuestion()" id="game-btn" class="mt-10 bg-brand-600 text-white font-black text-xl px-8 py-5 rounded-2xl shadow-xl shadow-brand-500/30 active:scale-95 transition-all w-full opacity-50 cursor-not-allowed hover:bg-brand-500" disabled>Siguiente Pregunta</button>
     </div>
 
     <!-- 3. Juego: Quiz Trivia -->
     <div id="view-game-trivia" class="view-section w-full max-w-md mx-auto bg-purple-50 min-h-screen flex-col relative shadow-2xl">
-        <div class="px-6 py-6 flex items-center justify-between z-10 sticky top-0 bg-purple-50/90 backdrop-blur">
-            <button onclick="showView('view-game-menu')" class="bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-            <h2 class="text-xl font-black text-purple-900">Quiz Trivia</h2>
-            <div class="w-9"></div>
+        <div class="px-6 py-6 flex items-center justify-between z-10 sticky top-0 bg-purple-50/90 backdrop-blur-md">
+            <button onclick="showView('view-game-menu')" class="bg-white p-2 rounded-full shadow-md text-gray-800 active:scale-95 transition-transform hover:bg-gray-100"><i class="ph ph-arrow-left text-xl"></i></button>
+            <h2 class="text-2xl font-black text-purple-900 tracking-tight">Quiz Trivia</h2>
+            <div class="w-10"></div>
         </div>
 
         <div id="trivia-categories-screen" class="px-6 flex flex-col flex-1 pb-10">
-            <div class="text-center mb-8">
-                <p class="text-purple-600 font-medium">Selecciona una categoría</p>
+            <div class="text-center mb-10 mt-4">
+                <p class="text-purple-600 font-bold bg-purple-100 inline-block px-4 py-2 rounded-full">Selecciona tu especialidad</p>
             </div>
-            <div class="grid grid-cols-1 gap-4">
-                <button onclick="startTrivia('historia')" class="bg-white border-2 border-orange-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
-                    <div class="bg-orange-100 text-orange-600 p-3 rounded-full"><i class="ph-fill ph-bank text-2xl"></i></div>
-                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Historia</span>
+            <div class="grid grid-cols-1 gap-5">
+                <button onclick="startTrivia('historia')" class="bg-white border-2 border-orange-100 p-5 rounded-[2rem] flex items-center gap-5 shadow-md active:scale-95 transition-all hover:border-orange-300 hover:shadow-lg">
+                    <div class="bg-orange-50 text-orange-500 p-4 rounded-2xl"><i class="ph-fill ph-bank text-3xl"></i></div>
+                    <span class="font-black text-gray-800 text-xl flex-1 text-left">Historia</span>
                 </button>
-                <button onclick="startTrivia('deportes')" class="bg-white border-2 border-green-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
-                    <div class="bg-green-100 text-green-600 p-3 rounded-full"><i class="ph-fill ph-soccer-ball text-2xl"></i></div>
-                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Deportes</span>
+                <button onclick="startTrivia('deportes')" class="bg-white border-2 border-green-100 p-5 rounded-[2rem] flex items-center gap-5 shadow-md active:scale-95 transition-all hover:border-green-300 hover:shadow-lg">
+                    <div class="bg-green-50 text-green-500 p-4 rounded-2xl"><i class="ph-fill ph-soccer-ball text-3xl"></i></div>
+                    <span class="font-black text-gray-800 text-xl flex-1 text-left">Deportes</span>
                 </button>
-                <button onclick="startTrivia('musica')" class="bg-white border-2 border-pink-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
-                    <div class="bg-pink-100 text-pink-600 p-3 rounded-full"><i class="ph-fill ph-music-notes text-2xl"></i></div>
-                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Música</span>
+                <button onclick="startTrivia('musica')" class="bg-white border-2 border-pink-100 p-5 rounded-[2rem] flex items-center gap-5 shadow-md active:scale-95 transition-all hover:border-pink-300 hover:shadow-lg">
+                    <div class="bg-pink-50 text-pink-500 p-4 rounded-2xl"><i class="ph-fill ph-music-notes text-3xl"></i></div>
+                    <span class="font-black text-gray-800 text-xl flex-1 text-left">Música</span>
                 </button>
-                <button onclick="startTrivia('entretenimiento')" class="bg-white border-2 border-yellow-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm active:scale-95 transition-transform">
-                    <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full"><i class="ph-fill ph-film-slate text-2xl"></i></div>
-                    <span class="font-bold text-gray-800 text-lg flex-1 text-left">Cine & TV</span>
+                <button onclick="startTrivia('entretenimiento')" class="bg-white border-2 border-yellow-100 p-5 rounded-[2rem] flex items-center gap-5 shadow-md active:scale-95 transition-all hover:border-yellow-300 hover:shadow-lg">
+                    <div class="bg-yellow-50 text-yellow-500 p-4 rounded-2xl"><i class="ph-fill ph-film-slate text-3xl"></i></div>
+                    <span class="font-black text-gray-800 text-xl flex-1 text-left">Cine & TV</span>
                 </button>
             </div>
         </div>
 
         <div id="trivia-active-screen" class="hidden px-6 flex-col flex-1 pb-10">
-            <div class="flex justify-between items-center bg-white p-3 rounded-2xl shadow-sm border border-purple-100 mb-6">
-                <span id="trivia-progress" class="text-sm font-bold text-purple-400">Pregunta 1/5</span>
-                <div class="flex items-center gap-1 text-purple-600 font-black bg-purple-100 px-3 py-1 rounded-lg transition-colors" id="trivia-timer-container">
+            <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-purple-100 mb-6 mt-2">
+                <span id="trivia-progress" class="text-sm font-bold text-purple-500 uppercase tracking-wider">Pregunta 1/5</span>
+                <div class="flex items-center gap-1.5 text-purple-700 font-black text-lg bg-purple-100 px-4 py-1.5 rounded-xl transition-colors" id="trivia-timer-container">
                     <i class="ph-fill ph-timer"></i> <span id="trivia-timer-text">15</span>s
                 </div>
             </div>
             
-            <div class="bg-white p-6 rounded-3xl shadow-md border-2 border-purple-200 mb-6 min-h-[160px] flex items-center justify-center text-center">
-                <h3 id="trivia-question-text" class="text-xl font-bold text-gray-800 leading-snug">¿Pregunta?</h3>
+            <div class="bg-white p-8 rounded-[2rem] shadow-lg border border-purple-100 mb-8 min-h-[12rem] flex items-center justify-center text-center">
+                <h3 id="trivia-question-text" class="text-2xl font-bold text-gray-800 leading-snug">¿Pregunta?</h3>
             </div>
 
-            <div id="trivia-options" class="flex flex-col gap-3"></div>
+            <div id="trivia-options" class="flex flex-col gap-4"></div>
         </div>
 
         <div id="trivia-result-screen" class="hidden px-6 flex-col items-center justify-center flex-1 pb-10">
-            <div class="bg-white p-8 rounded-3xl shadow-xl border-2 border-purple-200 text-center w-full">
-                <i class="ph-duotone ph-trophy text-7xl text-yellow-400 mb-4"></i>
-                <h2 class="text-3xl font-black text-gray-800 mb-2">¡Terminaste!</h2>
-                <p class="text-gray-500 mb-6">Tu puntuación final es:</p>
-                <div class="text-6xl font-black text-purple-600 mb-8"><span id="trivia-score-text">0</span><span class="text-3xl text-purple-300">/5</span></div>
+            <div class="bg-white p-10 rounded-[2rem] shadow-2xl border border-purple-100 text-center w-full animate-[slideUp_0.4s_ease-out]">
+                <div class="bg-yellow-50 w-28 h-28 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="ph-duotone ph-trophy text-7xl text-yellow-500"></i>
+                </div>
+                <h2 class="text-4xl font-black text-gray-900 mb-2 tracking-tight">¡Terminaste!</h2>
+                <p class="text-gray-500 font-medium mb-6">Tu puntuación final es:</p>
+                <div class="text-7xl font-black text-purple-600 mb-10"><span id="trivia-score-text">0</span><span class="text-4xl text-purple-300">/5</span></div>
                 
-                <button onclick="resetTriviaUI()" class="w-full bg-purple-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-transform mb-3">Jugar Otra Vez</button>
-                <button onclick="showView('view-game-menu')" class="w-full bg-gray-100 text-gray-700 font-bold py-4 rounded-xl active:scale-95 transition-transform">Volver a Juegos</button>
+                <button onclick="resetTriviaUI()" class="w-full bg-purple-600 text-white font-black text-xl py-5 rounded-2xl shadow-xl shadow-purple-500/30 active:scale-95 transition-transform mb-4 hover:bg-purple-700">Jugar Otra Vez</button>
+                <button onclick="showView('view-game-menu')" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-lg py-4 rounded-2xl active:scale-95 transition-colors">Volver a Juegos</button>
             </div>
         </div>
     </div>
 
     <!-- VISTA WIFI -->
     <div id="view-wifi" class="view-section w-full max-w-md mx-auto bg-blue-50 min-h-screen flex-col items-center justify-center relative px-6 shadow-2xl">
-        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-        <i class="ph ph-wifi-high text-7xl text-blue-500 mb-6"></i>
-        <h2 class="text-3xl font-black text-gray-800 mb-2 text-center">Conéctate gratis</h2>
-        <div class="bg-white p-6 rounded-3xl shadow-lg w-full max-w-xs mt-6 text-center border border-blue-100">
-            <p class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-1">Red</p>
-            <p id="wifi-ssid-display" class="text-xl font-black text-gray-800 mb-4">ElGranSabor_WIFI</p>
-            <p class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-1">Contraseña</p>
-            <p id="wifi-pass-display" class="text-2xl font-mono font-bold text-blue-600 mb-6 bg-blue-50 py-2 rounded-lg">sabor2024</p>
-            <button onclick="copyWifi()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"><i class="ph ph-copy"></i> Copiar Contraseña</button>
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-md text-gray-800 active:scale-95 transition-transform hover:bg-gray-100"><i class="ph ph-arrow-left text-xl"></i></button>
+        <div class="bg-blue-100 w-32 h-32 rounded-full flex items-center justify-center mb-8 shadow-inner animate-[fadeIn_0.5s_ease-out]">
+            <i class="ph-duotone ph-wifi-high text-7xl text-blue-600"></i>
+        </div>
+        <h2 class="text-4xl font-black text-gray-900 mb-3 text-center tracking-tight">Conéctate gratis</h2>
+        <p class="text-blue-600 font-medium text-center mb-8">Disfruta de internet de alta velocidad</p>
+        
+        <div class="bg-white p-8 rounded-[2rem] shadow-xl w-full max-w-sm text-center border border-blue-50">
+            <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Red Wi-Fi</p>
+            <p id="wifi-ssid-display" class="text-2xl font-black text-gray-800 mb-6">ElGranSabor_WIFI</p>
+            
+            <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Contraseña</p>
+            <div class="bg-blue-50 py-4 px-6 rounded-2xl mb-8 border border-blue-100">
+                <p id="wifi-pass-display" class="text-3xl font-mono font-bold text-blue-700 tracking-wider">sabor2024</p>
+            </div>
+            
+            <button onclick="copyWifi()" class="w-full bg-gray-900 text-white font-bold text-lg py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-transform hover:bg-black shadow-lg">
+                <i class="ph-bold ph-copy text-xl"></i> Copiar Contraseña
+            </button>
         </div>
     </div>
 
     <!-- VISTA RESERVAS Y PREGUNTAS -->
     <div id="view-reservas" class="view-section w-full max-w-md mx-auto bg-orange-50 min-h-screen flex-col items-center justify-center relative px-6 shadow-2xl">
-        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-sm text-gray-800 active:scale-95 transition-transform"><i class="ph ph-arrow-left text-lg"></i></button>
-        <i class="ph ph-calendar-check text-7xl text-orange-500 mb-6"></i>
-        <h2 class="text-3xl font-black text-gray-800 mb-2 text-center">Atención al Cliente</h2>
-        <p class="text-gray-500 text-sm text-center mb-6">Elige una opción para comunicarte con nosotros</p>
+        <button onclick="showView('view-home')" class="absolute top-6 left-6 bg-white p-2 rounded-full shadow-md text-gray-800 active:scale-95 transition-transform hover:bg-gray-100"><i class="ph ph-arrow-left text-xl"></i></button>
+        <div class="bg-orange-100 w-32 h-32 rounded-full flex items-center justify-center mb-8 shadow-inner animate-[fadeIn_0.5s_ease-out]">
+            <i class="ph-duotone ph-calendar-check text-7xl text-orange-500"></i>
+        </div>
+        <h2 class="text-4xl font-black text-gray-900 mb-3 text-center tracking-tight">Atención al Cliente</h2>
+        <p class="text-orange-700 font-medium text-center mb-10">Elige una opción para comunicarte</p>
         
-        <div class="w-full flex flex-col gap-4 max-w-xs">
-            <a href="https://wa.me/" target="_blank" class="bg-emerald-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-transform">
-                <i class="ph-fill ph-whatsapp-logo text-2xl"></i> Escribir por WhatsApp
+        <div class="w-full flex flex-col gap-5 max-w-sm">
+            <a href="https://wa.me/" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg p-5 rounded-2xl shadow-lg flex items-center justify-center gap-4 active:scale-95 transition-all">
+                <i class="ph-fill ph-whatsapp-logo text-3xl"></i> Mensaje por WhatsApp
             </a>
-            <a href="https://google.com" target="_blank" class="bg-white border-2 border-orange-200 text-gray-800 font-bold p-4 rounded-2xl shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-transform">
-                <i class="ph-fill ph-star text-2xl text-yellow-500"></i> Dejar Reseña en Google
+            <a href="https://google.com" target="_blank" class="bg-white border-2 border-orange-100 hover:border-orange-300 text-gray-800 font-bold text-lg p-5 rounded-2xl shadow-md flex items-center justify-center gap-4 active:scale-95 transition-all">
+                <i class="ph-fill ph-star text-3xl text-yellow-500"></i> Dejar Reseña en Google
             </a>
-            <a href="https://instagram.com" target="_blank" class="bg-white border-2 border-orange-200 text-gray-800 font-bold p-4 rounded-2xl shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-transform">
-                <i class="ph-fill ph-globe text-2xl text-blue-500"></i> Web o Reservas
+            <a href="https://instagram.com" target="_blank" class="bg-white border-2 border-orange-100 hover:border-orange-300 text-gray-800 font-bold text-lg p-5 rounded-2xl shadow-md flex items-center justify-center gap-4 active:scale-95 transition-all">
+                <i class="ph-fill ph-globe text-3xl text-blue-500"></i> Web o Reservas
             </a>
         </div>
     </div>
 
-    <!-- Contenedor Toast -->
-    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm"></div>
+    <!-- Contenedor Toast para Notificaciones Suaves -->
+    <div id="toast-container" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-3 pointer-events-none w-[90%] max-w-sm"></div>
 
     <script>
+        // DATOS POR DEFECTO DEL MENÚ
         const defaultData = [
-            { id: 1, name: "Hamburguesa Clásica", description: "Carne 200g, cheddar, lechuga, tomate y papas fritas.", price: 4500, category: "Principales", image: "https://placehold.co/400x300/ff9900/ffffff?text=Hamburguesa", isVegan: false, isGlutenFree: false, isSpicy: false, featured: true, order: 1, outOfStock: false },
-            { id: 2, name: "Cerveza Artesanal IPA", description: "Pinta 500ml de cerveza artesanal local.", price: 2200, category: "Bebidas", image: "https://placehold.co/400x300/ffcc00/ffffff?text=Cerveza", isVegan: true, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: false },
-            { id: 3, name: "Ensalada César", description: "Lechuga, crutones, parmesano, pollo y aderezo.", price: 3800, category: "Entradas", image: "https://placehold.co/400x300/66cc33/ffffff?text=Ensalada", isVegan: false, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: false },
-            { id: 4, name: "Tacos Al Pastor", description: "3 Tacos con carne de cerdo marinada y piña.", price: 4200, category: "Principales", image: "https://placehold.co/400x300/cc3300/ffffff?text=Tacos", isVegan: false, isGlutenFree: false, isSpicy: true, featured: true, order: 2, outOfStock: false },
-            { id: 5, name: "Volcán de Chocolate", description: "Bizcocho caliente con centro líquido y helado.", price: 2800, category: "Postres", image: "https://placehold.co/400x300/331a00/ffffff?text=Postre", isVegan: false, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: true }
+            { id: 1, name: "Hamburguesa Clásica", description: "Carne 200g, cheddar, lechuga, tomate y papas fritas crocantes.", price: 4500, category: "Principales", image: "https://placehold.co/400x300/ff9900/ffffff?text=Hamburguesa", isVegan: false, isGlutenFree: false, isSpicy: false, featured: true, order: 1, outOfStock: false },
+            { id: 2, name: "Cerveza Artesanal IPA", description: "Pinta 500ml de cerveza artesanal local, notas cítricas.", price: 2200, category: "Bebidas", image: "https://placehold.co/400x300/ffcc00/ffffff?text=Cerveza", isVegan: true, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: false },
+            { id: 3, name: "Ensalada César", description: "Lechuga fresca, crutones, parmesano, pollo y aderezo casero.", price: 3800, category: "Entradas", image: "https://placehold.co/400x300/66cc33/ffffff?text=Ensalada", isVegan: false, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: false },
+            { id: 4, name: "Tacos Al Pastor", description: "3 Tacos con carne de cerdo marinada, piña y salsa roja.", price: 4200, category: "Principales", image: "https://placehold.co/400x300/cc3300/ffffff?text=Tacos", isVegan: false, isGlutenFree: false, isSpicy: true, featured: true, order: 2, outOfStock: false },
+            { id: 5, name: "Volcán de Chocolate", description: "Bizcocho caliente con centro líquido y bocha de helado.", price: 2800, category: "Postres", image: "https://placehold.co/400x300/331a00/ffffff?text=Postre", isVegan: false, isGlutenFree: false, isSpicy: false, featured: false, order: 1, outOfStock: true }
         ];
         
-        let menuData = JSON.parse(localStorage.getItem('restaurant_menu_v2')) || defaultData;
-        let wifiData = JSON.parse(localStorage.getItem('restaurant_wifi_v2')) || { ssid: "ElGranSabor_WIFI", pass: "sabor2024" };
+        // Carga de datos desde LocalStorage (Persistencia)
+        let menuData = JSON.parse(localStorage.getItem('restaurant_menu_prod')) || defaultData;
+        let wifiData = JSON.parse(localStorage.getItem('restaurant_wifi_prod')) || { ssid: "ElGranSabor_WIFI", pass: "sabor2024" };
         
+        // Credenciales Admin
         const ADMIN_USER = "admin";
         const ADMIN_PASS = "123456";
 
+        // Variables de Estado
         let orderCart = [];
         let searchQuery = '';
         let activeTags = [];
         let editingId = null;
 
-        // --- SISTEMA DE JUEGOS: CHARLAS DE MESA (150+ preguntas automáticas) ---
         const gameDB = {
             rompehielos: { name: "Tranqui", icon: "ph-ice-cube", color: "blue", bg: "bg-blue-50", border: "border-blue-200", btn: "bg-blue-600", text: "text-blue-600", questions: [] },
             profundas: { name: "Profundas", icon: "ph-brain", color: "purple", bg: "bg-purple-50", border: "border-purple-200", btn: "bg-purple-600", text: "text-purple-600", questions: [] },
-            divertidas: { name: "Divertidas", icon: "ph-smiley-wink", color: "yellow", bg: "bg-yellow-50", border: "border-yellow-300", btn: "bg-yellow-500", text: "text-yellow-600", questions: [] },
+            divertidas: { name: "Divertidas", icon: "ph-smiley-wink", color: "yellow", bg: "bg-yellow-50", border: "border-yellow-300", btn: "bg-yellow-500", text: "text-yellow-700", questions: [] },
             picantes: { name: "Citas", icon: "ph-heart", color: "red", bg: "bg-red-50", border: "border-red-200", btn: "bg-red-600", text: "text-red-600", questions: [] }
         };
 
         function initGameDatabase() {
+            // Motor generador de combinaciones
             const generar = (base, formatos, temas) => {
                 let list = [...base];
                 formatos.forEach(f => temas.forEach(t => list.push(f.replace(/{x}/g, t))));
-                return list.sort(() => Math.random() - 0.5);
+                return list.sort(() => Math.random() - 0.5); // Shuffle
             };
 
             gameDB.rompehielos.questions = generar(
                 ["¿Cuál es tu comida favorita de la infancia?", "¿A dónde viajarías ahora mismo si te pagaran todo?", "¿Qué superpoder inútil elegirías?"],
                 ["¿Qué opinas sinceramente sobre {x}?", "¿Cuál es tu mejor recuerdo relacionado con {x}?", "¿Qué es lo que más odias de {x}?", "¿Podrías vivir sin {x} por un año?", "¿Qué consejo le darías a alguien sobre {x}?"],
-                ["la pizza", "viajar en avión", "el café", "las redes sociales", "el fin de semana", "las reuniones familiares", "ir al cine", "el home office", "la música en vivo", "la comida rápida", "los videojuegos", "los libros de autoayuda", "las mascotas", "el clima lluvioso", "madrugar", "las aplicaciones de citas", "la inteligencia artificial", "el gimnasio"]
+                ["la pizza con piña", "viajar en avión", "el café por la mañana", "las redes sociales", "el fin de semana", "las reuniones familiares", "ir al cine solo", "el home office", "la música en vivo", "la comida rápida", "los videojuegos", "los libros de autoayuda", "las mascotas", "el clima lluvioso", "madrugar", "las aplicaciones de citas", "la inteligencia artificial", "ir al gimnasio"]
             );
 
             gameDB.profundas.questions = generar(
                 ["¿Qué es lo que más valoras en una verdadera amistad?", "¿Cuál es tu mayor miedo que pocos conocen?", "¿Cómo te gustaría ser recordado?"],
                 ["¿Cómo ha cambiado tu visión de {x} en los últimos 5 años?", "¿Qué impacto crees que tiene {x} en la humanidad de hoy?", "¿Cuál es la lección más dura que aprendiste sobre {x}?", "¿Sientes que {x} está sobrevalorado o subestimado?"],
-                ["el paso del tiempo", "la soledad", "el fracaso", "el éxito profesional", "el dinero", "la familia", "el amor", "la muerte", "el destino", "la libertad", "la salud mental", "el ego", "el perdón", "la traición", "la nostalgia", "el propósito de vida"]
+                ["el paso del tiempo", "la soledad", "el fracaso escolar o laboral", "el éxito profesional", "el dinero y la riqueza", "la familia tradicional", "el amor verdadero", "la muerte", "el destino", "la libertad personal", "la salud mental", "el ego", "el perdón", "la traición de un amigo", "la nostalgia", "el propósito de la vida"]
             );
 
             gameDB.divertidas.questions = generar(
-                ["¿Si tuvieras que pelear contra 100 patos o 1 caballo miniatura, qué eliges?", "¿Cuál es la peor compra que has hecho en tu vida?", "¿Qué conspiración crees que en el fondo es cierta?"],
+                ["¿Si tuvieras que pelear contra 100 patos del tamaño de caballos o 1 caballo del tamaño de un pato, qué eliges?", "¿Cuál es la peor compra que has hecho en tu vida?", "¿Qué conspiración crees que en el fondo es cierta?"],
                 ["¿Cuál sería tu arma secreta para combatir a {x}?", "¿Si te nombran presidente del mundo, qué harías con {x}?", "¿Cuál es tu experiencia más vergonzosa con {x}?", "¿Te imaginas vivir en un mundo donde {x} no existiera?"],
-                ["los zombies", "los aliens", "las palomas", "las matemáticas", "los lunes", "las suegras", "los mosquitos", "el gimnasio", "los terraplanistas", "las notas de voz de 5 minutos", "el horóscopo", "las reuniones innecesarias", "el tráfico", "las dietas milagrosas"]
+                ["los zombies", "los aliens invasores", "las palomas de ciudad", "las matemáticas avanzadas", "los lunes por la mañana", "las suegras", "los mosquitos en verano", "el crossfit", "los terraplanistas", "las notas de voz de 5 minutos", "el horóscopo diario", "las reuniones de trabajo innecesarias", "el tráfico de la ciudad", "las dietas milagrosas"]
             );
 
             gameDB.picantes.questions = generar(
-                ["¿Cuál es tu idea de una cita completamente perfecta?", "¿Qué es lo primero que le miras a alguien?", "¿Cuál es tu mayor 'red flag' (bandera roja) en una relación?"],
+                ["¿Cuál es tu idea de una cita completamente perfecta?", "¿Qué es lo primero que le miras a alguien que te atrae?", "¿Cuál es tu mayor 'red flag' (bandera roja) en una relación?"],
                 ["¿Cuál es tu postura más firme e inquebrantable sobre {x}?", "¿Alguna vez te metiste en problemas por culpa de {x}?", "¿Qué consejo le darías a tu 'yo' del pasado sobre {x}?", "¿Crees genuinamente que {x} mata la pasión en una pareja?"],
-                ["las aplicaciones de citas", "el matrimonio", "la convivencia", "las relaciones a distancia", "los celos", "el coqueteo por redes", "la primera cita", "las ex parejas", "los secretos en el celular", "la diferencia de edad", "las indirectas", "declararse primero", "los amigos con derechos", "la rutina"]
+                ["las aplicaciones como Tinder", "el matrimonio", "la convivencia", "las relaciones a distancia", "los celos justificados", "el coqueteo por Instagram", "pagar en la primera cita", "seguir hablando con ex parejas", "los secretos en el celular", "la diferencia de edad", "las indirectas", "declararse primero", "los amigos con derechos", "la rutina del día a día"]
             );
         }
         initGameDatabase(); 
         let activeGameCategory = null;
 
-        // --- SISTEMA DE JUEGOS: TRIVIA ---
         const triviaQuestions = {
             historia: [
                 { q: "¿En qué año llegó Cristóbal Colón a América?", options: ["1492", "1592", "1402", "1512"], ans: 0 },
                 { q: "¿En qué año cayó el Muro de Berlín?", options: ["1985", "1989", "1991", "1995"], ans: 1 },
                 { q: "¿Qué civilización construyó Machu Picchu?", options: ["Aztecas", "Mayas", "Incas", "Toltecas"], ans: 2 },
-                { q: "¿Quién fue el primer presidente de Argentina?", options: ["San Martín", "Rivadavia", "Sarmiento", "Roca"], ans: 1 },
+                { q: "¿Quién pintó la Mona Lisa?", options: ["Van Gogh", "Picasso", "Da Vinci", "Dalí"], ans: 2 },
                 { q: "¿Cómo se llamaba la moneda de España antes del Euro?", options: ["Franco", "Libra", "Peseta", "Escudo"], ans: 2 }
             ],
             deportes: [
@@ -458,31 +518,41 @@
         let triviaState = { category: null, qIndex: 0, score: 0, timer: 15, interval: null, questions: [] };
 
         function showView(viewId) {
+            // Ocultar todas las vistas
             document.querySelectorAll('.view-section').forEach(el => { el.classList.remove('is-flex', 'is-block'); });
-            document.getElementById(viewId).classList.add('is-flex');
             
+            // Mostrar la vista solicitada
+            const view = document.getElementById(viewId);
+            view.classList.add('is-flex');
+            
+            // Lógica específica por vista
             if (viewId === 'view-menu') {
                 searchQuery = ''; activeTags = [];
                 document.getElementById('search-input').value = '';
-                document.querySelectorAll('[id^="tag-btn-"]').forEach(btn => btn.classList.replace('bg-gray-800', 'bg-gray-100'));
+                document.querySelectorAll('[id^="tag-btn-"]').forEach(btn => {
+                    btn.classList.replace('bg-gray-800', 'bg-white');
+                    btn.classList.replace('text-white', 'text-gray-600');
+                });
                 updateClientMenu();
             }
-            if (viewId === 'view-game-talk') {
+            else if (viewId === 'view-game-talk') {
                 if (!activeGameCategory) selectGameCategory('rompehielos'); 
             }
-            if (viewId === 'view-game-trivia') {
+            else if (viewId === 'view-game-trivia') {
                 resetTriviaUI();
             }
-            if (viewId === 'view-admin') {
+            else if (viewId === 'view-admin') {
                 updateAdminList();
                 populateCategorySelect();
                 document.getElementById('admin-wifi-ssid').value = wifiData.ssid;
                 document.getElementById('admin-wifi-pass').value = wifiData.pass;
             }
-            if (viewId === 'view-wifi') {
+            else if (viewId === 'view-wifi') {
                 document.getElementById('wifi-ssid-display').innerText = wifiData.ssid;
                 document.getElementById('wifi-pass-display').innerText = wifiData.pass;
             }
+            
+            // Scroll al top
             window.scrollTo(0,0);
         }
 
@@ -508,7 +578,7 @@
                 return;
             }
             wifiData = { ssid: newSsid, pass: newPass };
-            localStorage.setItem('restaurant_wifi_v2', JSON.stringify(wifiData));
+            localStorage.setItem('restaurant_wifi_prod', JSON.stringify(wifiData));
             showToast("Configuración Wi-Fi guardada", "success");
         }
 
@@ -518,10 +588,12 @@
             for (let key in gameDB) {
                 const cat = gameDB[key];
                 const isActive = activeGameCategory === key;
-                const activeClass = isActive ? `${cat.bg} ${cat.border} ${cat.text} shadow-md transform scale-105` : "bg-white border-gray-100 text-gray-400 hover:bg-gray-50";
+                const activeClass = isActive 
+                    ? `${cat.bg} ${cat.border} ${cat.text} shadow-md transform scale-105 border-2` 
+                    : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50 border shadow-sm";
                 container.innerHTML += `
-                    <button onclick="selectGameCategory('${key}')" class="flex-shrink-0 px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 border-2 transition-all cursor-pointer ${activeClass}">
-                        <i class="ph ${cat.icon} text-xl"></i> ${cat.name}
+                    <button onclick="selectGameCategory('${key}')" class="flex-shrink-0 px-5 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all cursor-pointer ${activeClass}">
+                        <i class="ph-fill ${cat.icon} text-xl"></i> ${cat.name}
                     </button>`;
             }
         }
@@ -531,15 +603,17 @@
             const cat = gameDB[key];
             renderGameCategories();
             
-            document.getElementById('game-icon').className = `ph ${cat.icon} text-5xl ${cat.text} mb-2 transition-colors duration-300`;
-            document.getElementById('game-card').className = `w-full h-64 rounded-3xl shadow-xl flex flex-col items-center justify-center p-8 text-center border-2 ${cat.border} ${cat.bg} relative transition-all duration-300`;
+            const icon = document.getElementById('game-icon');
+            icon.className = `ph-fill ${cat.icon} text-5xl ${cat.text} transition-colors duration-300`;
+            
+            const card = document.getElementById('game-card');
+            card.className = `w-full min-h-[16rem] rounded-[2rem] shadow-xl flex flex-col items-center justify-center p-8 text-center border-2 ${cat.border} ${cat.bg} relative transition-all duration-300`;
             
             const label = document.getElementById('game-category-label');
             label.innerText = cat.name;
-            label.className = `absolute top-4 text-xs font-black uppercase tracking-wider ${cat.text} transition-colors`;
             
             const btn = document.getElementById('game-btn');
-            btn.className = `mt-8 text-white font-bold text-lg px-8 py-4 rounded-full shadow-xl active:scale-95 transition-all w-full ${cat.btn}`;
+            btn.className = `mt-10 text-white font-black text-xl px-8 py-5 rounded-2xl shadow-xl active:scale-95 transition-all w-full ${cat.btn} hover:opacity-90`;
             btn.disabled = false;
             
             nextQuestion(); 
@@ -559,8 +633,8 @@
                 qElement.innerText = random;
                 qElement.style.opacity = 1;
                 qElement.style.transform = 'translateY(0)';
-                const textColorClass = cat.text.replace('600', '800'); 
-                qElement.className = `text-xl font-bold ${textColorClass} leading-snug transition-all duration-300`;
+                const textColorClass = cat.text.replace('600', '900').replace('500','900'); 
+                qElement.className = `text-2xl font-bold ${textColorClass} leading-snug transition-all duration-300`;
             }, 300);
         }
 
@@ -576,6 +650,7 @@
 
         function startTrivia(categoryKey) {
             triviaState.category = categoryKey;
+            // Clonar y barajar preguntas
             triviaState.questions = [...triviaQuestions[categoryKey]].sort(() => Math.random() - 0.5);
             triviaState.qIndex = 0;
             triviaState.score = 0;
@@ -600,24 +675,23 @@
             
             currentQ.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full bg-white border border-purple-200 text-gray-700 font-bold py-4 px-6 rounded-2xl shadow-sm hover:bg-purple-50 active:scale-95 transition-all text-left flex justify-between items-center";
-                btn.innerHTML = `<span>${opt}</span> <i class="ph ph-circle text-gray-300 text-xl trivia-icon"></i>`;
+                btn.className = "w-full bg-white border-2 border-purple-100 text-gray-700 font-bold text-lg py-5 px-6 rounded-2xl shadow-sm hover:border-purple-300 hover:bg-purple-50 active:scale-95 transition-all text-left flex justify-between items-center";
+                btn.innerHTML = `<span>${opt}</span> <i class="ph ph-circle text-gray-300 text-2xl trivia-icon"></i>`;
                 btn.onclick = () => answerTrivia(idx, btn);
                 optionsContainer.appendChild(btn);
             });
 
             triviaState.timer = 15;
             document.getElementById('trivia-timer-text').innerText = triviaState.timer;
-            document.getElementById('trivia-timer-container').classList.replace('text-red-500', 'text-purple-600');
-            document.getElementById('trivia-timer-container').classList.replace('bg-red-100', 'bg-purple-100');
+            const timerContainer = document.getElementById('trivia-timer-container');
+            timerContainer.className = "flex items-center gap-1.5 text-purple-700 font-black text-lg bg-purple-100 px-4 py-1.5 rounded-xl transition-colors";
 
             triviaState.interval = setInterval(() => {
                 triviaState.timer--;
                 document.getElementById('trivia-timer-text').innerText = triviaState.timer;
                 
                 if (triviaState.timer <= 5) {
-                    document.getElementById('trivia-timer-container').classList.replace('text-purple-600', 'text-red-500');
-                    document.getElementById('trivia-timer-container').classList.replace('bg-purple-100', 'bg-red-100');
+                    timerContainer.className = "flex items-center gap-1.5 text-red-600 font-black text-lg bg-red-100 px-4 py-1.5 rounded-xl transition-colors animate-pulse";
                 }
 
                 if (triviaState.timer <= 0) {
@@ -631,24 +705,20 @@
             clearInterval(triviaState.interval);
             const currentQ = triviaState.questions[triviaState.qIndex];
             const buttons = document.getElementById('trivia-options').querySelectorAll('button');
-            buttons.forEach(b => b.onclick = null);
+            buttons.forEach(b => b.onclick = null); // Disable all
 
             if (selectedIndex === currentQ.ans) {
                 triviaState.score++;
-                btnElement.classList.replace('border-purple-200', 'border-green-500');
-                btnElement.classList.replace('text-gray-700', 'text-green-700');
-                btnElement.classList.add('bg-green-50');
-                btnElement.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-xl";
+                btnElement.className = "w-full bg-green-50 border-2 border-green-500 text-green-800 font-bold text-lg py-5 px-6 rounded-2xl shadow-md transition-all text-left flex justify-between items-center";
+                btnElement.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-2xl scale-110 transition-transform";
             } else {
-                btnElement.classList.replace('border-purple-200', 'border-red-500');
-                btnElement.classList.replace('text-gray-700', 'text-red-700');
-                btnElement.classList.add('bg-red-50');
-                btnElement.querySelector('.trivia-icon').className = "ph-fill ph-x-circle text-red-500 text-xl";
+                btnElement.className = "w-full bg-red-50 border-2 border-red-500 text-red-800 font-bold text-lg py-5 px-6 rounded-2xl shadow-md transition-all text-left flex justify-between items-center";
+                btnElement.querySelector('.trivia-icon').className = "ph-fill ph-x-circle text-red-500 text-2xl scale-110 transition-transform";
                 
+                // Show correct
                 const correctBtn = buttons[currentQ.ans];
-                correctBtn.classList.replace('border-purple-200', 'border-green-500');
-                correctBtn.classList.add('bg-green-50', 'text-green-700');
-                correctBtn.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-xl";
+                correctBtn.className = "w-full bg-green-50 border-2 border-green-500 text-green-800 font-bold text-lg py-5 px-6 rounded-2xl shadow-md transition-all text-left flex justify-between items-center";
+                correctBtn.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-2xl";
             }
             setTimeout(nextTriviaQuestion, 1500);
         }
@@ -659,9 +729,8 @@
             buttons.forEach(b => b.onclick = null);
 
             const correctBtn = buttons[currentQ.ans];
-            correctBtn.classList.replace('border-purple-200', 'border-green-500');
-            correctBtn.classList.add('bg-green-50', 'text-green-700');
-            correctBtn.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-xl";
+            correctBtn.className = "w-full bg-green-50 border-2 border-green-500 text-green-800 font-bold text-lg py-5 px-6 rounded-2xl shadow-md transition-all text-left flex justify-between items-center";
+            correctBtn.querySelector('.trivia-icon').className = "ph-fill ph-check-circle text-green-500 text-2xl";
 
             setTimeout(nextTriviaQuestion, 1500);
         }
@@ -692,11 +761,11 @@
             const btn = document.getElementById(`tag-btn-${tag}`);
             if (activeTags.includes(tag)) {
                 activeTags = activeTags.filter(t => t !== tag);
-                btn.classList.replace('bg-gray-800', 'bg-gray-100');
+                btn.classList.replace('bg-gray-800', 'bg-white');
                 btn.classList.replace('text-white', 'text-gray-600');
             } else {
                 activeTags.push(tag);
-                btn.classList.replace('bg-gray-100', 'bg-gray-800');
+                btn.classList.replace('bg-white', 'bg-gray-800');
                 btn.classList.replace('text-gray-600', 'text-white');
             }
             updateClientMenu();
@@ -706,6 +775,7 @@
             const container = document.getElementById('menu-content');
             container.innerHTML = '';
 
+            // Filtrado múltiple
             let filteredData = menuData.filter(item => {
                 const matchesSearch = item.name.toLowerCase().includes(searchQuery) || item.description.toLowerCase().includes(searchQuery);
                 const matchesVegan = activeTags.includes('vegan') ? item.isVegan : true;
@@ -715,29 +785,38 @@
             });
 
             if (filteredData.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 text-gray-400"><i class="ph ph-magnifying-glass text-4xl mb-2"></i><p>No se encontraron platos.</p></div>`;
+                container.innerHTML = `
+                    <div class="text-center py-16 text-gray-400">
+                        <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="ph-duotone ph-magnifying-glass text-4xl text-gray-400"></i>
+                        </div>
+                        <p class="font-medium">No se encontraron platos.</p>
+                        <button onclick="document.getElementById('search-input').value=''; handleSearch();" class="mt-4 text-brand-600 font-bold underline">Limpiar búsqueda</button>
+                    </div>`;
                 return;
             }
 
+            // Sección Destacados (Solo si no hay búsqueda activa)
             const featured = filteredData.filter(i => i.featured && !i.outOfStock).sort((a,b)=>a.order-b.order);
             if (featured.length > 0 && searchQuery === '' && activeTags.length === 0) {
-                container.innerHTML += `<h3 class="font-black text-gray-800 mb-3 text-lg flex items-center gap-2"><i class="ph-fill ph-star text-yellow-500"></i> Recomendaciones del Chef</h3>`;
-                let carousel = `<div class="flex overflow-x-auto hide-scrollbar gap-4 mb-8 pb-2">`;
+                container.innerHTML += `<h3 class="font-black text-gray-900 mb-4 text-xl flex items-center gap-2"><i class="ph-fill ph-star text-yellow-500"></i> Recomendaciones del Chef</h3>`;
+                let carousel = `<div class="flex overflow-x-auto hide-scrollbar gap-4 mb-8 pb-4 -mx-5 px-5">`;
                 featured.forEach(item => {
                     carousel += `
-                    <div class="flex-shrink-0 w-64 bg-white rounded-2xl shadow-md overflow-hidden relative border border-gray-100">
-                        <div class="h-32 bg-cover bg-center" style="background-image: url('${item.image || 'https://placehold.co/400x300/eee/999?text=Sin+Imagen'}')"></div>
-                        <div class="p-4">
-                            <h4 class="font-bold text-gray-800 text-lg leading-tight mb-1">${item.name}</h4>
-                            <p class="font-black text-brand-600">$${item.price}</p>
+                    <div class="flex-shrink-0 w-64 bg-white rounded-3xl shadow-[0_8px_20px_rgba(0,0,0,0.06)] overflow-hidden relative border border-gray-100 flex flex-col h-[280px]">
+                        <div class="h-36 bg-cover bg-center" style="background-image: url('${item.image || 'https://placehold.co/400x300/eee/999?text=Sin+Imagen'}')"></div>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <h4 class="font-black text-gray-900 text-lg leading-tight mb-1">${item.name}</h4>
+                            <p class="font-black text-brand-600 text-xl mt-auto">$${item.price}</p>
                         </div>
-                        <button onclick="addToCart(${item.id})" class="absolute bottom-4 right-4 bg-gray-900 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg active:scale-95"><i class="ph ph-plus font-bold"></i></button>
+                        <button onclick="addToCart(${item.id})" class="absolute bottom-4 right-4 bg-gray-900 hover:bg-brand-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-colors"><i class="ph-bold ph-plus text-xl"></i></button>
                     </div>`;
                 });
                 carousel += `</div>`;
                 container.innerHTML += carousel;
             }
 
+            // Agrupación y Ordenamiento de Categorías
             const categories = {};
             filteredData.sort((a,b)=>a.order-b.order).forEach(item => {
                 if(!categories[item.category]) categories[item.category] = { name: item.category, items: [], minOrder: item.order };
@@ -747,35 +826,36 @@
 
             const sortedCategories = Object.values(categories).sort((a,b)=>a.minOrder - b.minOrder);
 
+            // Renderizado de Lista
             sortedCategories.forEach(cat => {
-                let html = `<h3 class="font-black text-gray-800 text-xl mb-4 mt-6 border-b-2 border-brand-500 pb-1 inline-block">${cat.name}</h3><div class="flex flex-col gap-4">`;
+                let html = `<h3 class="font-black text-gray-900 text-2xl mb-5 mt-8 border-b-4 border-brand-500 pb-2 inline-block rounded-sm">${cat.name}</h3><div class="flex flex-col gap-4">`;
                 
                 cat.items.forEach(item => {
                     let tagsHtml = '';
-                    if(item.isVegan) tagsHtml += `<span title="Vegano" class="text-green-500"><i class="ph-fill ph-leaf"></i></span>`;
-                    if(item.isGlutenFree) tagsHtml += `<span title="Sin TACC" class="text-amber-600"><i class="ph-fill ph-grains-slash"></i></span>`;
-                    if(item.isSpicy) tagsHtml += `<span title="Picante" class="text-red-500"><i class="ph-fill ph-fire"></i></span>`;
+                    if(item.isVegan) tagsHtml += `<span title="Vegano" class="bg-green-50 text-green-600 p-1 rounded-md"><i class="ph-fill ph-leaf text-sm"></i></span>`;
+                    if(item.isGlutenFree) tagsHtml += `<span title="Sin TACC" class="bg-amber-50 text-amber-600 p-1 rounded-md"><i class="ph-fill ph-grains-slash text-sm"></i></span>`;
+                    if(item.isSpicy) tagsHtml += `<span title="Picante" class="bg-red-50 text-red-600 p-1 rounded-md"><i class="ph-fill ph-fire text-sm"></i></span>`;
                     
                     const isOut = item.outOfStock;
-                    const grayscale = isOut ? 'grayscale opacity-60' : '';
+                    const grayscale = isOut ? 'grayscale opacity-50' : '';
                     
                     html += `
-                    <div class="bg-white p-3 rounded-2xl shadow-sm flex gap-4 ${grayscale} relative border border-gray-100">
-                        <div class="w-24 h-24 rounded-xl bg-cover bg-center flex-shrink-0 border border-gray-100" style="background-image: url('${item.image || 'https://placehold.co/400x300/eee/999?text=Sin+Imagen'}')"></div>
-                        <div class="flex-1 py-1 pr-2 flex flex-col">
-                            <div class="flex justify-between items-start">
-                                <h4 class="font-bold text-gray-800 leading-tight pr-2">${item.name}</h4>
-                                <div class="flex gap-1 text-sm">${tagsHtml}</div>
+                    <div class="bg-white p-4 rounded-[1.5rem] shadow-sm flex gap-4 ${grayscale} relative border border-gray-100 hover:shadow-md transition-shadow">
+                        <div class="w-28 h-28 rounded-2xl bg-cover bg-center flex-shrink-0 border border-gray-100" style="background-image: url('${item.image || 'https://placehold.co/400x300/eee/999?text=Sin+Imagen'}')"></div>
+                        <div class="flex-1 py-1 pr-1 flex flex-col">
+                            <div class="flex justify-between items-start gap-2">
+                                <h4 class="font-black text-gray-900 text-lg leading-tight">${item.name}</h4>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">${item.description}</p>
+                            <div class="flex gap-1.5 mt-1.5 mb-1">${tagsHtml}</div>
+                            <p class="text-sm text-gray-500 line-clamp-2 leading-snug font-medium">${item.description}</p>
                             <div class="mt-auto flex justify-between items-end">
                                 ${isOut 
-                                    ? `<span class="font-bold text-red-500 text-sm bg-red-50 border border-red-200 px-2 py-0.5 rounded-md mt-2">AGOTADO</span>`
-                                    : `<p class="font-black text-brand-600">$${item.price}</p>`
+                                    ? `<span class="font-bold text-red-600 text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-lg mt-2 tracking-wide uppercase">Agotado hoy</span>`
+                                    : `<p class="font-black text-brand-600 text-lg">$${item.price}</p>`
                                 }
                             </div>
                         </div>
-                        ${!isOut ? `<button onclick="addToCart(${item.id})" class="absolute bottom-3 right-3 bg-gray-100 hover:bg-brand-50 text-brand-600 w-8 h-8 rounded-full flex items-center justify-center active:scale-95 transition-transform"><i class="ph ph-plus font-bold"></i></button>` : ''}
+                        ${!isOut ? `<button onclick="addToCart(${item.id})" class="absolute bottom-4 right-4 bg-gray-100 hover:bg-brand-100 text-gray-800 hover:text-brand-600 w-10 h-10 rounded-full flex items-center justify-center active:scale-95 transition-colors shadow-sm"><i class="ph-bold ph-plus text-xl"></i></button>` : ''}
                     </div>`;
                 });
                 html += `</div>`;
@@ -789,7 +869,7 @@
             const existing = orderCart.find(i => i.id === id);
             if(existing) { existing.qty++; } else { orderCart.push({...item, qty: 1}); }
             updateCartBtn();
-            showToast(`Se añadió ${item.name}`, "success");
+            showToast(`Añadido: ${item.name}`, "success");
         }
 
         function updateCartBtn() {
@@ -833,15 +913,15 @@
             orderCart.forEach(item => {
                 total += item.price * item.qty;
                 container.innerHTML += `
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-gray-800 text-sm">${item.name}</h4>
-                        <p class="text-brand-600 font-black text-xs">$${item.price}</p>
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+                    <div class="flex-1 pr-3">
+                        <h4 class="font-bold text-gray-900 text-base leading-tight mb-1">${item.name}</h4>
+                        <p class="text-brand-600 font-black text-sm">$${item.price}</p>
                     </div>
-                    <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-full px-2 py-1 shadow-sm">
-                        <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 flex justify-center items-center rounded-full text-gray-500 active:bg-gray-100"><i class="ph ph-minus"></i></button>
-                        <span class="font-bold text-sm w-4 text-center">${item.qty}</span>
-                        <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 flex justify-center items-center rounded-full text-gray-500 active:bg-gray-100"><i class="ph ph-plus"></i></button>
+                    <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-full px-2 py-1 shadow-inner">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 flex justify-center items-center rounded-full text-gray-600 hover:bg-gray-200 active:scale-95 transition-colors"><i class="ph-bold ph-minus"></i></button>
+                        <span class="font-black text-base w-5 text-center text-gray-900">${item.qty}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 flex justify-center items-center rounded-full text-gray-600 hover:bg-gray-200 active:scale-95 transition-colors"><i class="ph-bold ph-plus"></i></button>
                     </div>
                 </div>`;
             });
@@ -853,7 +933,7 @@
             const categories = [...new Set(menuData.map(item => item.category))];
             select.innerHTML = '';
             categories.forEach(c => { select.innerHTML += `<option value="${c}">${c}</option>`; });
-            select.innerHTML += `<option value="NEW">+ Nueva Categoría...</option>`;
+            select.innerHTML += `<option value="NEW" class="font-bold text-brand-600">+ Crear Nueva Categoría...</option>`;
             checkNewCategory();
         }
 
@@ -871,18 +951,23 @@
         function updateAdminList() {
             const list = document.getElementById('admin-list');
             list.innerHTML = '';
+            document.getElementById('admin-total-items').innerText = `${menuData.length} platos`;
+            
             [...menuData].sort((a,b)=>a.order-b.order).forEach(item => {
-                const isOut = item.outOfStock ? '<span class="text-xs bg-red-100 text-red-600 px-1 rounded ml-1 border border-red-200">Agotado</span>' : '';
+                const isOut = item.outOfStock ? '<span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md font-bold border border-red-200 uppercase tracking-widest">Agotado</span>' : '';
                 list.innerHTML += `
-                <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
-                    <div class="flex flex-col flex-1 pr-2">
-                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">${item.category} (Ord: ${item.order})</span>
-                        <span class="font-bold text-gray-800 text-sm leading-tight">${item.name} ${item.featured ? '⭐' : ''} ${isOut}</span>
-                        <span class="text-xs font-black text-brand-600">$${item.price}</span>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex justify-between items-center hover:shadow-md transition-shadow">
+                    <div class="flex flex-col flex-1 pr-3">
+                        <span class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">${item.category} <span class="text-gray-300">|</span> Ord: ${item.order}</span>
+                        <span class="font-black text-gray-800 text-base leading-tight mb-1">${item.name} ${item.featured ? '⭐' : ''}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-black text-brand-600">$${item.price}</span>
+                            ${isOut}
+                        </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="editDish(${item.id})" class="bg-blue-50 text-blue-600 p-2 rounded-lg border border-blue-100 active:scale-95"><i class="ph ph-pencil-simple"></i></button>
-                        <button onclick="deleteDish(${item.id})" class="bg-red-50 text-red-600 p-2 rounded-lg border border-red-100 active:scale-95"><i class="ph ph-trash"></i></button>
+                        <button onclick="editDish(${item.id})" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-3 rounded-xl border border-blue-100 active:scale-95 transition-colors" title="Editar"><i class="ph-bold ph-pencil-simple text-lg"></i></button>
+                        <button onclick="deleteDish(${item.id})" class="bg-red-50 hover:bg-red-100 text-red-600 p-3 rounded-xl border border-red-100 active:scale-95 transition-colors" title="Eliminar"><i class="ph-bold ph-trash text-lg"></i></button>
                     </div>
                 </div>`;
             });
@@ -895,7 +980,7 @@
                 if(!catVal) { showToast("Escribe un nombre para la categoría nueva", "error"); return; }
             }
 
-            const name = document.getElementById('admin-name').value;
+            const name = document.getElementById('admin-name').value.trim();
             const price = document.getElementById('admin-price').value;
             if(!name || !price) { showToast("El nombre y el precio son obligatorios", "error"); return; }
 
@@ -905,8 +990,8 @@
                 name: name,
                 order: parseInt(document.getElementById('admin-order').value) || 1,
                 price: parseFloat(price),
-                description: document.getElementById('admin-desc').value,
-                image: document.getElementById('admin-image').value,
+                description: document.getElementById('admin-desc').value.trim(),
+                image: document.getElementById('admin-image').value.trim(),
                 featured: document.getElementById('admin-featured').checked,
                 isVegan: document.getElementById('admin-vegan').checked,
                 isGlutenFree: document.getElementById('admin-gf').checked,
@@ -920,7 +1005,7 @@
                 menuData.push(dish);
             }
 
-            localStorage.setItem('restaurant_menu_v2', JSON.stringify(menuData));
+            localStorage.setItem('restaurant_menu_prod', JSON.stringify(menuData));
             showToast(editingId ? "Plato actualizado con éxito" : "Plato guardado con éxito", "success");
             
             resetAdminForm();
@@ -933,7 +1018,7 @@
             if(!dish) return;
             
             editingId = id;
-            document.getElementById('admin-form-title').innerText = "Editar Plato";
+            document.getElementById('admin-form-title').innerHTML = `<i class="ph-fill ph-pencil-circle text-blue-500"></i> Editando: ${dish.name}`;
             
             const select = document.getElementById('admin-category-select');
             if([...select.options].some(o => o.value === dish.category)) {
@@ -962,7 +1047,7 @@
 
         function resetAdminForm() {
             editingId = null;
-            document.getElementById('admin-form-title').innerText = "Agregar Nuevo Plato";
+            document.getElementById('admin-form-title').innerHTML = `<i class="ph-fill ph-plus-circle text-brand-500"></i> Agregar Nuevo Plato`;
             document.getElementById('admin-category-new').value = '';
             document.getElementById('admin-name').value = '';
             document.getElementById('admin-order').value = '1';
@@ -979,29 +1064,45 @@
         }
 
         function deleteDish(id) {
-            if(confirm("¿Estás seguro de que deseas eliminar este plato definitivamente?")) {
+            if(confirm("¿Estás seguro de que deseas eliminar este plato definitivamente? Esta acción no se puede deshacer.")) {
                 menuData = menuData.filter(item => item.id !== id);
-                localStorage.setItem('restaurant_menu_v2', JSON.stringify(menuData));
+                localStorage.setItem('restaurant_menu_prod', JSON.stringify(menuData));
                 updateAdminList();
-                showToast("Plato eliminado", "error");
+                showToast("Plato eliminado", "error"); // Usamos estilo error para borrar
             }
         }
 
         function copyWifi() {
-            navigator.clipboard.writeText(wifiData.pass).then(() => { 
-                showToast("Contraseña copiada al portapapeles", "success"); 
-            }).catch(() => { 
-                showToast("Error al copiar", "error"); 
-            });
+            const pass = wifiData.pass;
+            // Soporte robusto para copiado en dispositivos móviles
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(pass).then(() => showToast("Contraseña copiada", "success"));
+            } else {
+                let textArea = document.createElement("textarea");
+                textArea.value = pass;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast("Contraseña copiada", "success");
+                } catch (err) {
+                    showToast("Error al copiar", "error");
+                }
+                textArea.remove();
+            }
         }
 
         function showToast(msg, type="success") {
             const toast = document.createElement('div');
-            const color = type === 'success' ? 'bg-gray-900' : 'bg-red-500';
+            const color = type === 'success' ? 'bg-gray-900 border-gray-700' : 'bg-red-600 border-red-500';
             const icon = type === 'success' ? 'ph-check-circle' : 'ph-warning-circle';
             
-            toast.className = `${color} text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-bold opacity-0 transition-all duration-300 transform -translate-y-4 border border-white/10`;
-            toast.innerHTML = `<i class="ph-fill ${icon} text-xl"></i> ${msg}`;
+            toast.className = `${color} text-white px-5 py-4 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.3)] flex items-center gap-3 text-sm font-bold opacity-0 transition-all duration-300 transform -translate-y-4 border border-white/10 z-50`;
+            toast.innerHTML = `<i class="ph-fill ${icon} text-2xl"></i> ${msg}`;
             
             const container = document.getElementById('toast-container');
             container.appendChild(toast);
@@ -1018,6 +1119,7 @@
             }, 3000);
         }
 
+        // Inicialización de la aplicación al cargar
         window.onload = () => { 
             showView('view-home'); 
         }
